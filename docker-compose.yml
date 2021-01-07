@@ -1,0 +1,38 @@
+version: "3"
+
+services:
+  web:
+    build: .
+    restart: always
+    command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
+    ports:
+      - 8000:8000
+    expose:
+      - 8000
+    volumes:
+      - .:/app
+    working_dir: /app
+    environment:
+      - DB_URL=postgresql+psycopg2://user:password@db:5432/db
+    depends_on:
+      - db
+    links:
+      - db
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - 8080:8080
+    depends_on:
+      - db
+  db:
+    image: postgres:12.4
+    restart: always
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: password
+    volumes:
+      - ./postgresql:/var/lib/postgresql
+    ports:
+      - 5432:5432
