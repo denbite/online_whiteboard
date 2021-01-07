@@ -1,2 +1,1 @@
-# fitness-diary
-Fitness Diary
+# Online Whiteboard

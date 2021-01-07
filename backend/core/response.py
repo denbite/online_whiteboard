@@ -7,7 +7,7 @@ def send_error_response(code: int, message: str, data: dict = None):
     return __send_response(False, code=code, message=message, data=data)
 
 
-def send_success_response(data: [dict, list, str], pagination: dict = None):
+def send_success_response(data: [dict, list, str] = {}, pagination: dict = None):
     return __send_response(True, data=data, pagination=pagination)
 
 

@@ -1,8 +1,8 @@
 version: "3"
 
 services:
-  web:
-    build: .
+  backend_server:
+    build: ./backend
     restart: always
     command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
     ports:
@@ -10,7 +10,7 @@ services:
     expose:
       - 8000
     volumes:
-      - .:/app
+      - ./backend:/app
     working_dir: /app
     environment:
       - DB_URL=postgresql+psycopg2://user:password@db:5432/db
@@ -36,3 +36,9 @@ services:
       - ./postgresql:/var/lib/postgresql
     ports:
       - 5432:5432
+  frontend_server:
+    build: ./frontend
+    ports:
+      - 80:80
+    volumes:
+      - ./frontend/www:/var/www
