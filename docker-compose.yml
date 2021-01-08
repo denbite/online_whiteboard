@@ -4,7 +4,8 @@ services:
   backend_server:
     build: ./backend
     restart: always
-    command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
+    # command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
+    command: python3 entry.py
     ports:
       - 8000:8000
     expose:
