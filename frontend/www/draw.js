@@ -2,6 +2,15 @@ window.onload = function(){
 
     console.log('script started!');
 
+    var ws = new WebSocket("ws://127.0.0.1:8000");
+
+    ws.onmessage = function (event) {
+
+        data = JSON.parse(event.data)
+
+        console.log(data);
+    };
+
     // create canvas element and append it to document body
     var canvas = document.getElementById('drawingCanvas');
     var saveButton = document.getElementById('saveButton');
@@ -50,6 +59,8 @@ window.onload = function(){
         data = canvas.toDataURL('image/png');
 
         console.log('data: ', data);
+
+        ws.send(JSON.stringify({name: 'denbite'}));
     }
 
     // new position from mouse event
