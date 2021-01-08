@@ -3,9 +3,26 @@
 <head>
 	<title>Online Whiteboard</title>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
-	<meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <meta http-equiv="X-UA-Compatible" content="IE=edge"/>
+    <link rel="stylesheet" href="/style.css">
+    <script type="text/javascript" src="/draw.js"></script>
 </head>
 <body>
-	<h1>Hello world, denbite!</h1>
+    <div class="Toolbar">
+        - Операции-<br>
+        <button id="saveButton">Сохранить содержимое Canvas</button>
+        <button id="clearButton">Очистить Canvas</button>
+        <!-- <div id="savedCopyContainer">
+           <img id="savedImageCopy"><br>
+           Щелкните правой кнопкой мыши для сохранения ...
+        </div> -->
+    </div>
+	<div class="CanvasContainer">
+        <canvas id="drawingCanvas">
+
+            </canvas>
+</div>
+
+
 </body>
 </html>
