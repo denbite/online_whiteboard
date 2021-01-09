@@ -18,16 +18,26 @@ class Server:
 
     async def register(self, ws: WebSocketServerProtocol) -> None:
         self.clients.add(ws)
-        logging.info("{} connects".format(ws.remote_address))
+        logging.info("{} connected".format(ws.remote_address))
 
     async def unregister(self, ws: WebSocketServerProtocol) -> None:
+        await ws.close()
         self.clients.remove(ws)
-        logging.info("{} disconnects".format(ws.remote_address))
+        logging.info("{} disconnected".format(ws.remote_address))
 
     async def main_handler(self, ws: WebSocketServerProtocol, uri: str) -> None:
-        await self.register(ws)
+
+        logging.info("uri: {} handled from {}".format(uri, ws.remote_address))
+        if uri != "/board":
+            await ws.close()
+
+        if ws not in self.clients:
+            await self.register(ws)
+
         try:
             await self.distribute(ws)
+        except:
+            pass
         finally:
             await self.unregister(ws)
 

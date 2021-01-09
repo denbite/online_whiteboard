@@ -2,13 +2,24 @@ window.onload = function(){
 
     console.log('script started!');
 
-    var ws = new WebSocket("ws://127.0.0.1:8000");
+    var ws = new WebSocket("ws://127.0.0.1:8000/board");
 
     ws.onmessage = function (event) {
+        data = JSON.parse(event.data);
 
-        data = JSON.parse(event.data)
+        console.log('received message from server: ', data);
 
-        console.log(data);
+        if (data.action == 'draw'){
+            var img = new Image();
+            
+            img.src = data.image_url;
+            
+            img.onload = () => {
+                ctx.drawImage(img, 0, 0);
+            }
+        } else if(data.action == 'clear'){
+            clearCanvas();
+        }
     };
 
     // create canvas element and append it to document body
@@ -17,24 +28,13 @@ window.onload = function(){
     var clearButton = document.getElementById('clearButton');
 
     var strData = undefined
-    strData = undefined
+
     // some hotfixes... ( ≖_≖)
     document.body.style.margin = 0;
     canvas.style.position = 'fixed';
 
     // get canvas 2D context and set him correct size
     var ctx = canvas.getContext('2d');
-
-    if (strData != undefined) {
-        var img = new Image();
-
-        img.src = strData;
-
-        img.onload = () => {
-            ctx.drawImage(img, 0, 0);
-        }
-
-    }
 
     resize();
 
@@ -43,24 +43,32 @@ window.onload = function(){
 
     canvas.addEventListener('resize', resize);
     canvas.addEventListener('mousemove', draw);
-    canvas.addEventListener('touchmove', draw);
     canvas.addEventListener('mousedown', setPosition);
-    canvas.addEventListener('touchend', setPosition);
     canvas.addEventListener('mouseenter', setPosition);
-    canvas.addEventListener('touchstart', setPosition);
+    canvas.addEventListener('mouseup', (e)=> {
+        e.preventDefault();
 
+        image_url = canvas.toDataURL('image/png');
+        
+        console.log('data: ', image_url);
+        
+        ws.send(JSON.stringify({action: 'draw', board_url: 'adh216s', image_url: image_url}));
+    })
+    
+    canvas.addEventListener('touchmove', draw);
+    canvas.addEventListener('touchstart', setPosition);
+    canvas.addEventListener('touchend', setPosition);
 
     saveButton.addEventListener('click', saveCanvas);
-    clearButton.addEventListener('click', clearCanvas);
+    clearButton.addEventListener('click', (e) => {
+        ws.send(JSON.stringify({action: 'clear', board_url: 'adh216s'}))
+
+        clearCanvas();
+    });
 
     function saveCanvas(event) {
         console.log('clicked!');
 
-        data = canvas.toDataURL('image/png');
-
-        console.log('data: ', data);
-
-        ws.send(JSON.stringify({name: 'denbite'}));
     }
 
     // new position from mouse event
