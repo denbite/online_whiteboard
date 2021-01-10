@@ -133,3 +133,5 @@ Pipfile
 Pipfile.lock
 .DS_Store
 .vscode/settings.json
+
+/old_frontend
