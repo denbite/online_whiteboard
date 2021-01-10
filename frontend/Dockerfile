@@ -1,9 +1,9 @@
-FROM nginx:1.19.0-alpine
+FROM mhart/alpine-node:14.15
 
-RUN rm /etc/nginx/conf.d/default.conf
-RUN rm /etc/nginx/nginx.conf
-COPY nginx.conf /etc/nginx
+WORKDIR /app
 
-RUN nginx -t
+RUN npm install --frozen-lockfile
 
 EXPOSE 80
+
+CMD ["npm", "run", "dev"]
