@@ -1,0 +1,32 @@
+.toolbar {
+  float: left;
+  display: block;
+  font-family: "Trebuchet MS";
+  font-size: 14px;
+  font-variant: small-caps;
+  text-align: center;
+  background: #f2f7fe;
+  padding: 10px 15px 3px 10px;
+  margin-bottom: 1px;
+  margin-right: 1px;
+  border: 1px solid #7b899b;
+}
+
+.toolbarButton {
+  padding: 9px;
+  margin: 10px;
+  /* font-variant: normal; */
+  font-size: 14px;
+  border-radius: 10px;
+  border: none;
+}
+
+.saveButton {
+  composes: toolbarButton;
+  background-color: #1a8d1a;
+}
+
+.clearButton {
+  composes: toolbarButton;
+  background-color: #b8213a;
+}
