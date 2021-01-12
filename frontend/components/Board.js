@@ -1,10 +1,12 @@
 import React from 'react';
+import { connect } from 'react-redux';
+import styles from '../styles/Board.module.css';
 
-import styles from '../styles/Board.module.css'
-
-export default class Board extends React.Component{
+class Board extends React.Component{
     constructor(props) {
         super(props);
+
+        console.log(this.props);
 
         this.state = {
           ctx: null,
@@ -21,11 +23,6 @@ export default class Board extends React.Component{
         }, () => {
             this.state.ctx.canvas.width = window.innerWidth;
             this.state.ctx.canvas.height = window.innerHeight;
-
-            // init brush settings with default values
-            this.setLineWidth();
-            this.setBrushColor();
-            this.state.ctx.lineCap = 'round';
 
             this.canvas.addEventListener('mousemove', this.draw);
             this.canvas.addEventListener('mousedown', this.setPosition);
@@ -54,28 +51,15 @@ export default class Board extends React.Component{
         })
     }
 
-    setLineWidth = (width = 3) => {
-
-        if (!Number.isInteger(width)) {
-            width = 3; // set to default value
-        }
-
-        this.state.ctx.lineWidth = width;
-    }
-
-    setBrushColor = (color = "#c0392b") => {
-        if (!color instanceof String || color.length != 7){
-            color = "#c0392b"; // default color
-        }
-
-        this.state.ctx.strokeStyle = color;
-    }
-
     draw = (e) => {
         // mouse left button must be pressed
         if (e.buttons !== 1) return;
 
         this.state.ctx.beginPath(); // begin
+
+        this.state.ctx.lineWidth = this.props.brushWidth;
+        this.state.ctx.lineCap = 'round';
+        this.state.ctx.strokeStyle = this.props.brushColor;
 
         this.state.ctx.moveTo(this.state.pos.x, this.state.pos.y); // from
         this.setPosition(e);
@@ -93,3 +77,10 @@ export default class Board extends React.Component{
         )
     }
 }
+
+const mapStateToProps = (state) => ({
+    brushWidth: state.board.width,
+    brushColor: state.board.color,
+})
+
+export default connect(mapStateToProps, {})(Board);
