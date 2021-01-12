@@ -1,8 +1,8 @@
 .toolbar {
   float: left;
-  display: block;
+  display: flex;
   font-family: "Trebuchet MS";
-  font-size: 14px;
+  font-size: 18px;
   font-variant: small-caps;
   text-align: center;
   background: #f2f7fe;
@@ -12,13 +12,24 @@
   border: 1px solid #7b899b;
 }
 
+.toolbarBlock {
+  margin: 0px 10px;
+}
+
 .toolbarButton {
-  padding: 9px;
+  padding: 12px;
   margin: 10px;
   /* font-variant: normal; */
-  font-size: 14px;
+  font-size: 16px;
   border-radius: 10px;
   border: none;
+  text-transform: uppercase;
+}
+
+.toolbarButton:hover {
+  cursor: pointer;
+  color: #ffffff;
+  transform: scale(1.02);
 }
 
 .saveButton {
@@ -29,4 +40,12 @@
 .clearButton {
   composes: toolbarButton;
   background-color: #b8213a;
+}
+
+.toolbarImgButton {
+  padding: 3px;
+}
+
+.toolbarImgButton:hover {
+  transform: scale(1.1);
 }
