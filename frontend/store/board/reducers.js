@@ -13,10 +13,14 @@ export const boardReducer = (state = initialState, action) => {
             }
 
             state.points[action.payload].push([]);
+            console.log('created new pic!')
+            console.log(state)
             return state
 
         case BOARD_ADD_POINT_TO_LAST_PIC:
             state.points[action.payload.key][ state.points[action.payload.key].length - 1 ].push(action.payload.point);
+            console.log('moved pic!')
+        
             return state
    
         case BOARD_CLEAR:
