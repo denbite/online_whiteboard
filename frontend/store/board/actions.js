@@ -1,5 +1,6 @@
 export const BOARD_CREATE_NEW_PIC = "BOARD_CREATE_NEW_PIC"
 export const BOARD_ADD_POINT_TO_LAST_PIC = "BOARD_ADD_POINT_TO_LAST_PIC"
+export const BOARD_CLEAR = "BOARD_CLEAR"
 
 export const createNewPic = (brush) => ({
     type: BOARD_CREATE_NEW_PIC,
@@ -12,6 +13,10 @@ export const addPointToLastPic = (point, brush) => ({
         point, 
         key: __transformBrushToKey(brush)
     }
+})
+
+export const clearBoard = () => ({
+    type: BOARD_CLEAR
 })
 
 const __transformBrushToKey = (brush) => (

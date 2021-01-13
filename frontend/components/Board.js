@@ -1,35 +1,44 @@
 import React from 'react';
-import { connect } from 'react-redux';
+import { connect, useSelector } from 'react-redux';
 import styles from '../styles/Board.module.css';
 import {createNewPic, addPointToLastPic} from '../store/board/actions'
+import {store}  from '../pages/_app'
 
 class Board extends React.Component{
     componentDidMount = () => {
         // setting context from canvas node
         this.ctx = this.canvas.getContext('2d');
 
-        this.canvas.addEventListener('mousemove', this.draw);
-        this.canvas.addEventListener('mousedown', e => (
-            this.props.createNewPic({
-                width: this.props.brushWidth,
-                color: this.props.brushColor,
-            })
-        ));
-
-        // this.ctx.canvas.addEventListener('mouseenter', posFunc);
+        // add listeners for main actions
+        this.canvas.addEventListener('mousemove', this.addPointToLastPic);
+        this.canvas.addEventListener('mousedown', this.createNewPic);
     
         this.ctx.canvas.width = window.innerWidth;
         this.ctx.canvas.height = window.innerHeight;
     
         // init brush parameters
         this.ctx.lineCap = 'round';
+
+        // without timeout it's require to double click on button 'clear rect' 
+        store.subscribe( () => {
+            setTimeout(() => {
+                return this.draw()
+            }, 5)
+        } );
     }
 
+    createNewPic = e => {
+        // put to store empty array as "width.color": [..., []] for adding new points in future
+        this.props.createNewPic({
+            width: this.props.brushWidth,
+            color: this.props.brushColor,
+        })
+    }
 
-
-    draw = (e) => {
+    addPointToLastPic = e => {
         if (e.buttons !== 1) return;
 
+        // put to store one point as "width.color": [[...], [..., {x, y}]]
         this.props.addPointToLastPic({
             x: e.clientX - e.target.offsetLeft,
             y: e.clientY - e.target.offsetTop
@@ -37,11 +46,16 @@ class Board extends React.Component{
             width: this.props.brushWidth,
             color: this.props.brushColor,
         });
-        
-        this.renderBoard();
     }
 
-    renderBoard = () => {
+    draw = () => {
+        // if empty object with points -> clear context
+        if (Object.keys(this.props.points).length === 0){
+            this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+            return;
+        }
+
+        // draw picture with points from store that saved as "width.color": [[{x, y}, {x, y}, ...], [{x, y}, {x, y}, ...], ...]
         for (const [key, points] of Object.entries(this.props.points)) {
             if (points.length === 0) continue;
 
@@ -82,7 +96,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-    createNewPic, addPointToLastPic
+    createNewPic, addPointToLastPic, 
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);
