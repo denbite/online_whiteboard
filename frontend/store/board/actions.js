@@ -1,12 +1,19 @@
-export const BOARD_CHANGE_BRUSH_WIDTH = "BOARD_CHANGE_BRUSH_WIDTH"
-export const BOARD_CHANGE_BRUSH_COLOR = "BOARD_CHANGE_BRUSH_COLOR"
+export const BOARD_CREATE_NEW_PIC = "BOARD_CREATE_NEW_PIC"
+export const BOARD_ADD_POINT_TO_LAST_PIC = "BOARD_ADD_POINT_TO_LAST_PIC"
 
-export const setBrushWidth = width => ({
-    'type': BOARD_CHANGE_BRUSH_WIDTH,
-    'payload': width
+export const createNewPic = (brush) => ({
+    type: BOARD_CREATE_NEW_PIC,
+    payload: __transformBrushToKey(brush)
 })
 
-export const setBrushColor = color => ({
-    'type': BOARD_CHANGE_BRUSH_COLOR,
-    'payload': color
+export const addPointToLastPic = (point, brush) => ({
+    type: BOARD_ADD_POINT_TO_LAST_PIC,
+    payload: {
+        point, 
+        key: __transformBrushToKey(brush)
+    }
 })
+
+const __transformBrushToKey = (brush) => (
+    [brush.width, brush.color].join('.')
+)

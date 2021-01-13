@@ -1,71 +1,68 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import styles from '../styles/Board.module.css';
+import {createNewPic, addPointToLastPic} from '../store/board/actions'
 
 class Board extends React.Component{
-    constructor(props) {
-        super(props);
-
-        console.log(this.props);
-
-        this.state = {
-          ctx: null,
-          pos: {
-              x: 0,
-              y: 0
-          }
-        };
-      }
-
     componentDidMount = () => {
-        this.setState({
-            ctx: this.canvas.getContext('2d')
-        }, () => {
-            this.state.ctx.canvas.width = window.innerWidth;
-            this.state.ctx.canvas.height = window.innerHeight;
+        // setting context from canvas node
+        this.ctx = this.canvas.getContext('2d');
 
-            this.canvas.addEventListener('mousemove', this.draw);
-            this.canvas.addEventListener('mousedown', this.setPosition);
-            this.canvas.addEventListener('mouseenter', this.setPosition);
-        })
+        this.canvas.addEventListener('mousemove', this.draw);
+        this.canvas.addEventListener('mousedown', e => (
+            this.props.createNewPic({
+                width: this.props.brushWidth,
+                color: this.props.brushColor,
+            })
+        ));
+
+        // this.ctx.canvas.addEventListener('mouseenter', posFunc);
+    
+        this.ctx.canvas.width = window.innerWidth;
+        this.ctx.canvas.height = window.innerHeight;
+    
+        // init brush parameters
+        this.ctx.lineCap = 'round';
     }
 
-    componentWillUnmount = () => {
-        this.setState({
-            ctx: null,
-            pos: {
-                x: 0,
-                y: 0
-            }
-          });
 
-        delete this.canvas;
-    }
-
-    setPosition = (e) => {
-        this.setState({
-            pos: {
-                x: e.clientX - e.target.offsetLeft,
-                y: e.clientY - e.target.offsetTop
-            }
-        })
-    }
 
     draw = (e) => {
-        // mouse left button must be pressed
         if (e.buttons !== 1) return;
 
-        this.state.ctx.beginPath(); // begin
+        this.props.addPointToLastPic({
+            x: e.clientX - e.target.offsetLeft,
+            y: e.clientY - e.target.offsetTop
+        }, {
+            width: this.props.brushWidth,
+            color: this.props.brushColor,
+        });
+        
+        this.renderBoard();
+    }
 
-        this.state.ctx.lineWidth = this.props.brushWidth;
-        this.state.ctx.lineCap = 'round';
-        this.state.ctx.strokeStyle = this.props.brushColor;
+    renderBoard = () => {
+        for (const [key, points] of Object.entries(this.props.points)) {
+            if (points.length === 0) continue;
 
-        this.state.ctx.moveTo(this.state.pos.x, this.state.pos.y); // from
-        this.setPosition(e);
-        this.state.ctx.lineTo(this.state.pos.x, this.state.pos.y); // to
+            let brushWidth = key.split('.')[0];
+            let brushColor = key.split('.')[1];
 
-        this.state.ctx.stroke(); // draw it!
+            points.map( one_picture => {
+                for (let i=0; i < one_picture.length - 1; i++){
+                    this.ctx.beginPath(); // begin
+    
+                    this.ctx.lineWidth = brushWidth;
+                    this.ctx.strokeStyle = brushColor;
+    
+                    this.ctx.moveTo(one_picture[i].x, one_picture[i].y); // from
+    
+                    this.ctx.lineTo(one_picture[i + 1].x, one_picture[i + 1].y); // to
+    
+                    this.ctx.stroke(); // draw it!
+                }
+            } )
+        }
     }
 
     render(){
@@ -79,8 +76,13 @@ class Board extends React.Component{
 }
 
 const mapStateToProps = (state) => ({
-    brushWidth: state.board.width,
-    brushColor: state.board.color,
+    points: state.board.points,
+    brushWidth: state.toolbar.brushWidth,
+    brushColor: state.toolbar.brushColor,
 })
 
-export default connect(mapStateToProps, {})(Board);
+const mapDispatchToProps = {
+    createNewPic, addPointToLastPic
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(Board);
