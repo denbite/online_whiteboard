@@ -92,7 +92,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-    createNewPic, addPointToLastPic
+    createNewPic, addPointToLastPic, 
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);
