@@ -33,7 +33,6 @@ export const Board = props => {
 
     useEffect(() => {
         function initContext(canvas) {
-            console.log('initContext')
             let ctx = canvas.getContext('2d');
         
             ctx.canvas.width = window.innerWidth;
