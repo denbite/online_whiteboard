@@ -18,6 +18,3 @@ export const changeBrushColor = color => ({
     type: TOOLBAR_CHANGE_BRUSH_COLOR,
     payload: color
 })
-
-
-
