@@ -6,9 +6,9 @@ from sqlalchemy.dialects.postgresql import JSON
 class Board(Model, db.Model):
     __tablename__ = "board"
 
-    url = db.Column(db.String, nullable=False)
+    url = db.Column(db.String, nullable=False, primary_key=True)
 
-    data = db.Column(JSON, nullable=False)
+    data = db.Column(JSON, nullable=False, default={})
 
     updated_at = db.Column(
         db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()

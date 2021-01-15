@@ -2,6 +2,9 @@ from core import db
 
 from datetime import date
 from settings.constants import DATE_FORMAT
+import logging
+
+logger = logging.getLogger(__name__)
 
 
 def commit(obj):
@@ -27,7 +30,7 @@ class Model(object):
         return commit(obj)
 
     @classmethod
-    def update(cls, row_id, **kwargs):
+    def update(cls, param: [int, dict], **kwargs):
         """
         Update record by id
 
@@ -35,7 +38,7 @@ class Model(object):
         row_id: record id
         kwargs: dict with object parameters
         """
-        obj = cls.query.get(row_id)
+        obj = cls.query.get(param)
 
         for key, value in kwargs.items():
             setattr(obj, key, value)
