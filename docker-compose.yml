@@ -1,15 +1,15 @@
 version: "3"
 
 services:
-  backend:
-    build: ./backend
+  api:
+    build: ./backend/api
     restart: always
     # command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
     command: python3 entry.py
     ports:
       - 8000:8000
     volumes:
-      - ./backend:/app
+      - ./backend/api:/app
     working_dir: /app
     environment:
       - DB_URL=postgresql+psycopg2://user:password@db:5432/db
@@ -17,6 +17,15 @@ services:
       - db
     links:
       - db
+  websocket:
+    build: ./backend/websocket
+    restart: always
+    command: python3 server.py
+    ports:
+      - 8001:8001
+    volumes:
+      - ./backend/websocket:/app
+    working_dir: /app
   adminer:
     image: adminer
     restart: always
@@ -41,7 +50,8 @@ services:
       - 80:80
     environment:
       APP_ENV: dev
-      APP_BACKEND_URL: backend:8000
+      APP_API_URL: api:8000
+      APP_WS_URL: websocket:8001
       APP_FRONTEND_PORT: 80
     volumes:
       - ./frontend:/app

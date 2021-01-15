@@ -8,6 +8,8 @@ export const Board = props => {
     const currentBrushWidth = props.brushWidth;
     const currentBrushColor = props.brushColor;
 
+    const ws = props.websocket
+
     const canvas_ref = useRef(null);
 
     function createNewPicEvent(e) {
@@ -29,6 +31,26 @@ export const Board = props => {
             width: currentBrushWidth,
             color: currentBrushColor,
         });
+    }
+
+    function saveLastPic(e) {
+
+        console.log('event mouseup')
+
+        let key = currentBrushWidth + '.' + currentBrushColor;
+
+        let lastPic = store_points[key][ store_points[key].length - 1 ]
+
+        console.log(lastPic)
+
+        ws.send(JSON.stringify({
+            action: 'saveLastPic',
+            brush: {
+                width: currentBrushWidth,
+                color: currentBrushColor,
+            },
+            pic: lastPic
+        }));
     }
 
     useEffect(() => {
@@ -78,7 +100,7 @@ export const Board = props => {
 
     return (
         <div className={styles.canvasContainer}>
-                <canvas onMouseDown={createNewPicEvent} onMouseMove={addPointToLastPicEvent} className={styles.canvas} id="drawingCanvas" ref={canvas_ref}>
+                <canvas onMouseUp={saveLastPic} onMouseDown={createNewPicEvent} onMouseMove={addPointToLastPicEvent} className={styles.canvas} id="drawingCanvas" ref={canvas_ref}>
                 </canvas>
             </div>
         )

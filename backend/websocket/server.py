@@ -1,10 +1,3 @@
-# from core import create_app
-
-# app = create_app()
-
-# if __name__ == "__main__":
-#     app.run(debug=True, host="0.0.0.0", port=8000)
-
 import asyncio
 import websockets
 import logging
@@ -45,7 +38,7 @@ class Server:
         async for message in ws:
             await self.send_to_clients(message, ws)
             logging.info(
-                "received message: [{}] from {}".format(message, ws.remote_address)
+                "received message: {} from {}".format(message, ws.remote_address)
             )
 
     async def send_to_clients(
@@ -62,7 +55,7 @@ class Server:
 
 
 server = Server()
-start_server = websockets.serve(server.main_handler, "0.0.0.0", 8000)
+start_server = websockets.serve(server.main_handler, "0.0.0.0", 8001)
 loop = asyncio.get_event_loop()
 loop.run_until_complete(start_server)
 loop.run_forever()

@@ -10,6 +10,14 @@ class Toolbar extends React.Component{
         console.log('clicked!');
     }
 
+    clearBoard = (event) => {
+        this.props.clearBoard();
+
+        this.props.websocket.send(JSON.stringify({
+            action: 'clearBoard'
+        }))
+    }
+
     render(){
         return (
         <div className={styles.toolbar}>
@@ -18,7 +26,7 @@ class Toolbar extends React.Component{
                 <button className={styles.saveButton} id="saveButton" onClick={this.saveCanvas}>
                 Поделиться
                 </button>
-                <button className={styles.clearButton} id="clearButton" onClick={this.props.clearBoard}>
+                <button className={styles.clearButton} id="clearButton" onClick={this.clearBoard}>
                 Очистить
                 </button>
             </div>

@@ -7,7 +7,7 @@ from flask_cors import CORS
 from settings.constants import DB_URL
 
 
-db = SQLAlchemy()
+db: SQLAlchemy = SQLAlchemy()
 
 
 def create_app():
