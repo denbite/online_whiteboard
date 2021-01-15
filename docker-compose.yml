@@ -4,8 +4,8 @@ services:
   api:
     build: ./backend/api
     restart: always
-    # command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
-    command: python3 entry.py
+    command: gunicorn entry:app --bind 0.0.0.0:8000 --reload
+    # command: python3 entry.py
     ports:
       - 8000:8000
     volumes:

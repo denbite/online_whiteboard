@@ -33,7 +33,7 @@ export default function SyncBoard() {
       }
     })
 
-    const websocket = new WebSocket("ws://192.168.0.100:8001/board");
+    const websocket = new WebSocket("ws://192.168.0.100:8001/board/" + board_url);
 
     websocket.onmessage = function (event) {
 
