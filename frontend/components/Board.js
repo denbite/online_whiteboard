@@ -2,6 +2,7 @@ import React, {useEffect, useRef} from 'react';
 import { connect } from 'react-redux';
 import styles from '../styles/Board.module.css';
 import {createNewPic, addPointToLastPic, __transformBrushToKey} from '../store/board/actions'
+import { fetchApi } from '../helpers/api';
 
 export const Board = props => {
     const store_points = props.points;
@@ -45,34 +46,26 @@ export const Board = props => {
 
         console.log(lastPic)
 
-        fetch('http://192.168.0.100:8000/api/board', {
-                method:'PUT',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: new URLSearchParams({
-                    board_url: props.url,
-                    data_delta: JSON.stringify(lastPic),
-                    key: key,
-                    action: "BOARD_ADD_PIC"
-                })
-            })
-            .then(r => r.json())
-            .then(response => {
-                if (response.success){
-                    props.websocket.send(JSON.stringify({
-                        action: 'saveLastPic',
-                        brush: {
-                            width: currentBrushWidth,
-                            color: currentBrushColor,
-                        },
-                        pic: lastPic
-                    }));
-                } else {
-                    console.log('error on fetch PUT /board: ', response.error.message)
-                }
-            })
+        fetchApi('/board', 'PUT', {
+                        board_url: props.url,
+                        data_delta: JSON.stringify(lastPic),
+                        key: key,
+                        action: "BOARD_ADD_PIC"
+                    }, response => {
+                        if (response.success){
+                            props.websocket.send(JSON.stringify({
+                                    action: 'saveLastPic',
+                                    brush: {
+                                        width: currentBrushWidth,
+                                        color: currentBrushColor,
+                                    },
+                                    pic: lastPic
+                                }));
+                            } else {
+                                console.log('error on fetch PUT /board: ', response.error.message)
+                            }
+                        })
+
     }
 
     useEffect(() => {

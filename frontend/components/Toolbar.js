@@ -4,6 +4,7 @@ import { connect } from 'react-redux';
 import {changeBrushColor, changeBrushWidth} from '../store/toolbar/actions';
 import { clearBoard } from '../store/board/actions';
 import * as actions from '../store/toolbar/constants';
+import { fetchApi } from '../helpers/api';
 
 export const Toolbar = props => {
     function saveCanvas (event) {
@@ -15,27 +16,18 @@ export const Toolbar = props => {
 
         if (!props.websocket || !props.url) return;
 
-        fetch('http://192.168.0.100:8000/api/board', {
-                method:'PUT',
-                headers: {
-                    'Content-Type': 'application/x-www-form-urlencoded',
-                    'Accept': 'application/json'
-                },
-                body: new URLSearchParams({
+        fetchApi('/board', 'PUT', {
                     board_url: props.url,
                     action: "BOARD_CLEAR"
+                }, response => {
+                    if (response.success){
+                        props.websocket.send(JSON.stringify({
+                            action: 'clearBoard'
+                        }))
+                    } else {
+                        console.log('error on fetch PUT /board: ', response.error.message)
+                    }
                 })
-            })
-            .then(r => r.json())
-            .then(response => {
-                if (response.success){
-                    props.websocket.send(JSON.stringify({
-                        action: 'clearBoard'
-                    }))
-                } else {
-                    console.log('error on fetch PUT /board: ', response.error.message)
-                }
-            })
     }
 
     return (

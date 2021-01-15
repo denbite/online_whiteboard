@@ -5,6 +5,7 @@ import {useRouter} from 'next/router';
 import {useEffect} from 'react'
 import { useDispatch } from 'react-redux';
 import { initPoints, addPic, clearBoard} from '../../store/board/actions';
+import { fetchApi } from '../../helpers/api'
 
 export default function SyncBoard() {
     const { board_url } = useRouter().query
@@ -12,26 +13,17 @@ export default function SyncBoard() {
 
     if (!board_url) return '';
 
-    fetch('http://192.168.0.100:8000/api/board?' + new URLSearchParams({
-      board_url: board_url
-    }), {
-        method:'GET',
-        headers: {
-            'Content-Type': 'application/x-www-form-urlencoded',
-            'Accept': 'application/json'
+    fetchApi('/board', 'GET', {board_url: board_url}, response => {
+          if (response.success){
+              dispatch(initPoints(response.data.board_data));
+            } else {
+              // todo: change window.location on HomePage, show notification that board didn't find and you can draw new
+              // set var showNotification in store for notification
+              console.log(response.error.message);
+              window.location.href = 'http://localhost/';
+          }
         }
-    })
-    .then(r => r.json())
-    .then(response => {
-      if (response.success){
-        dispatch(initPoints(response.data.board_data));
-      } else {
-        // todo: change window.location on HomePage, show notification that board didn't find and you can draw new
-        // set var showNotification in store for notification
-        console.log(response.error.message);
-        window.location.href = 'http://localhost/';
-      }
-    })
+      )
 
     const websocket = new WebSocket("ws://192.168.0.100:8001/board/" + board_url);
 
@@ -45,8 +37,6 @@ export default function SyncBoard() {
 
             case 'saveLastPic':
               const {pic, brush} = JSON.parse(event.data);
-
-              console.log('received message from server: ', pic);
       
               return dispatch(addPic(pic, brush))
             
