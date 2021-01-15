@@ -34,6 +34,6 @@ export const addPic = (pic, brush) => ({
     }
 })
 
-const __transformBrushToKey = (brush) => (
+export const __transformBrushToKey = (brush) => (
     [brush.width, brush.color].join('.')
 )
