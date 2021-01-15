@@ -62,7 +62,7 @@ export default function SyncBoard() {
           <title>Online Whiteboard</title>
           <meta name="viewport" content="initial-scale=1.0, width=device-width" />
         </Head>
-        <Toolbar websocket={websocket} />
+        <Toolbar websocket={websocket} url={board_url}/>
         <Board websocket={websocket} url={board_url}/>
       </>
     )

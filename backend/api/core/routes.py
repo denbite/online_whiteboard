@@ -9,4 +9,4 @@ def board_methods():
     if request.method == "GET":
         return board.get_board()
     elif request.method == "PUT":
-        return board.update_board_with_delta()
+        return board.update_board()

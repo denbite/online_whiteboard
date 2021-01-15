@@ -36,51 +36,88 @@ def get_board():
     return send_success_response(board)
 
 
-def update_board_with_delta():
+def update_board():
 
     data = get_request_data()
 
-    for required_field in ["board_url", "data_delta", "key"]:
-        if required_field not in data.keys():
-            err = "No '{field}' specified".format(field=required_field)
+    if "action" not in data.keys():
+        err = "No 'action' specified"
+        return send_error_response(400, err)
+
+    action = data["action"]
+
+    if action == "BOARD_ADD_PIC":
+        for required_field in ["board_url", "data_delta", "key"]:
+            if required_field not in data.keys():
+                err = "No '{field}' specified".format(field=required_field)
+                return send_error_response(400, err)
+
+        try:
+            board_url = str(data["board_url"])
+            data_delta = loads(data["data_delta"])
+            key = str(data["key"])
+        except Exception as err:
+            return send_error_response(400, str(err))
+
+        # todo: could add regex for check key correct or no
+        if len(key) != 9:
+            err = "Invalid key given"
             return send_error_response(400, err)
 
-    try:
-        board_url = str(data["board_url"])
-        data_delta = loads(data["data_delta"])
-        key = str(data["key"])
-    except Exception as err:
-        return send_error_response(400, str(err))
+        if not data_delta:
+            err = "No empty delta allowed"
+            return send_error_response(400, err)
 
-    # todo: could add regex for check key correct or no
-    if len(key) != 9:
-        err = "Invalid key given"
+        # todo: how to validate input delta for correct structure?
+
+        try:
+            board_obj = Board.query.filter_by(url=board_url).one()
+        except NoResultFound:
+            err = "Didn't found board with url '{}'".format(board_url)
+            return send_error_response(404, err)
+
+        new_data: dict = deepcopy(board_obj.data)
+
+        # assume key is correct
+        if key not in new_data:
+            new_data[key] = []
+
+        new_data[key].append(data_delta)
+
+        try:
+            updated_obj = Board.update({"url": board_url}, **{"data": new_data})
+        except Exception as err:
+            return send_error_response(400, str(err))
+
+    elif action == "BOARD_CLEAR":
+
+        for required_field in ["board_url"]:
+            if required_field not in data.keys():
+                err = "No '{field}' specified".format(field=required_field)
+                return send_error_response(400, err)
+
+        try:
+            board_url = str(data["board_url"])
+        except Exception as err:
+            return send_error_response(400, str(err))
+
+        try:
+            Board.query.filter_by(url=board_url).one()
+        except NoResultFound:
+            err = "Didn't found board with url '{}'".format(board_url)
+            return send_error_response(404, err)
+
+        try:
+            updated_obj = Board.update({"url": board_url}, **{"data": {}})
+        except Exception as err:
+            return send_error_response(400, str(err))
+
+    elif action == "BOARD_INIT_POINTS":
+        pass
+
+    else:
+        err = "Invalid action type, choose from ['BOARD_ADD_PIC', 'BOARD_CLEAR', 'BOARD_INIT_POINTS']"
         return send_error_response(400, err)
-
-    if not data_delta:
-        err = "No empty delta allowed"
-        return send_error_response(400, err)
-
-    # todo: how to validate input delta for correct structure?
-
-    try:
-        board_obj = Board.query.filter_by(url=board_url).one()
-    except NoResultFound:
-        err = "Didn't found board with url '{}'".format(board_url)
-        return send_error_response(404, err)
-
-    new_data: dict = deepcopy(board_obj.data)
-
-    # assume key is correct
-    if key not in new_data:
-        new_data[key] = []
-
-    new_data[key].append(data_delta)
-
-    try:
-        updated_obj = Board.update({"url": board_url}, **{"data": new_data})
-    except Exception as err:
-        return send_error_response(400, str(err))
 
     updated_record = {
         k: v for k, v in updated_obj.__dict__.items() if k in ["url", "data"]

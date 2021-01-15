@@ -54,7 +54,8 @@ export const Board = props => {
                 body: new URLSearchParams({
                     board_url: props.url,
                     data_delta: JSON.stringify(lastPic),
-                    key: key
+                    key: key,
+                    action: "BOARD_ADD_PIC"
                 })
             })
             .then(r => r.json())

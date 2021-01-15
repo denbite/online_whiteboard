@@ -13,9 +13,29 @@ class Toolbar extends React.Component{
     clearBoard = (event) => {
         this.props.clearBoard();
 
-        this.props.websocket.send(JSON.stringify({
-            action: 'clearBoard'
-        }))
+        if (!this.props.websocket || !this.props.url) return;
+
+        fetch('http://192.168.0.100:8000/api/board', {
+                method:'PUT',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'Accept': 'application/json'
+                },
+                body: new URLSearchParams({
+                    board_url: this.props.url,
+                    action: "BOARD_CLEAR"
+                })
+            })
+            .then(r => r.json())
+            .then(response => {
+                if (response.success){
+                    this.props.websocket.send(JSON.stringify({
+                        action: 'clearBoard'
+                    }))
+                } else {
+                    console.log('error on fetch PUT /board: ', response.error.message)
+                }
+            })
     }
 
     render(){
