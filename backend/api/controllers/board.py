@@ -160,3 +160,28 @@ def create_board():
         return send_error_response(400, str(err))
 
     return send_success_response({"board_url": obj.url})
+
+
+def delete_board():
+    data = get_request_data()
+
+    for required_field in ["board_url"]:
+        if required_field not in data.keys():
+            err = "No '{field}' specified".format(field=required_field)
+            return send_error_response(400, err)
+
+    try:
+        board_url = str(data["board_url"])
+    except Exception as err:
+        return send_error_response(400, str(err))
+
+    logging.info(board_url)
+
+    try:
+        if not Board.delete({"url": board_url}):
+            err = "Didn't found board with url '{}'".format(board_url)
+            return send_error_response(400, err)
+    except Exception as err:
+        return send_error_response(400, str(err))
+
+    return send_success_response()

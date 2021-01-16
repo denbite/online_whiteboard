@@ -31,7 +31,7 @@ class Model(object):
         Update record by id
 
         cls: class
-        row_id: record id
+        param: record para
         kwargs: dict with object parameters
         """
         obj = cls.query.get(param)
@@ -47,13 +47,17 @@ class Model(object):
         Delete record by id
 
         cls: class
-        row_id: record id
-        return: int (1 if deleted else 0)
+        param: record param
+        return: bool (True if deleted else False)
         """
-        # obj = db.session.query(cls).filter(cls.id == row_id).delete()
-        obj = cls.query.get(param).delete()
+        obj = cls.query.get(param)
+
+        if obj is None:
+            return False
+
+        db.session.delete(obj)
         db.session.commit()
-        return obj
+        return True
 
     @classmethod
     def add_relation(cls, row_id, rel_obj):
