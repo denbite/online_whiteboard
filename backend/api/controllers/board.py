@@ -4,6 +4,12 @@ from models import Board
 from sqlalchemy.orm.exc import NoResultFound
 from json import loads
 from copy import deepcopy
+from hashlib import md5
+from time import time
+from random import randint
+import logging
+
+logging.basicConfig(level=logging.INFO)
 
 # {
 #         "2.#55faab": [[{"x": 271, "y": 272}, {"x": 325, "y": 295}, {"x": 371, "y": 145}], [{"x": 271, "y": 171}, {"x": 310, "y": 259}, {"x": 371, "y": 145}]],
@@ -124,3 +130,33 @@ def update_board():
     }
 
     return send_success_response(updated_record)
+
+
+def create_board():
+    data = get_request_data()
+
+    for required_field in ["points"]:
+        if required_field not in data.keys():
+            err = "No '{field}' specified".format(field=required_field)
+            return send_error_response(400, err)
+
+    try:
+        points = loads(data["points"])
+    except Exception as err:
+        return send_error_response(400, str(err))
+
+    # todo: how to validate input points for correct structure?
+
+    # generate new board_url
+    first = md5(str(time()).encode()).hexdigest()
+    second = md5(str(randint(0, 2 ** 16)).encode()).hexdigest()
+
+    board_url = "{}{}{}".format(first[:4], second[:8], first[-4:])
+    logging.info("final: {}".format(board_url))
+
+    try:
+        obj = Board.create(**{"data": points, "url": board_url})
+    except Exception as err:
+        return send_error_response(400, str(err))
+
+    return send_success_response({"board_url": obj.url})

@@ -1,10 +1,6 @@
 from core import db
-
 from datetime import date
 from settings.constants import DATE_FORMAT
-import logging
-
-logger = logging.getLogger(__name__)
 
 
 def commit(obj):
@@ -46,7 +42,7 @@ class Model(object):
         return commit(obj)
 
     @classmethod
-    def delete(cls, row_id):
+    def delete(cls, param: [int, dict]):
         """
         Delete record by id
 
@@ -54,7 +50,8 @@ class Model(object):
         row_id: record id
         return: int (1 if deleted else 0)
         """
-        obj = db.session.query(cls).filter(cls.id == row_id).delete()
+        # obj = db.session.query(cls).filter(cls.id == row_id).delete()
+        obj = cls.query.get(param).delete()
         db.session.commit()
         return obj
 

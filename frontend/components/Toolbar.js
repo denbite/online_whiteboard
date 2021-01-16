@@ -3,12 +3,37 @@ import styles from '../styles/Toolbar.module.css';
 import { connect } from 'react-redux';
 import {changeBrushColor, changeBrushWidth} from '../store/toolbar/actions';
 import { clearBoard } from '../store/board/actions';
+import { toggleShow , changeUrl} from '../store/modal/actions';
 import * as actions from '../store/toolbar/constants';
 import { fetchApi } from '../helpers/api';
+import { useRouter } from 'next/router';
 
 export const Toolbar = props => {
-    function saveCanvas (event) {
-        console.log('clicked!');
+    const router = useRouter()
+
+    function shareBoard (event) {
+        let url = 'http://192.168.0.100/'
+
+        if (!props.url){
+            // fetch api, create board and insert board_url
+            fetchApi('/board', 'POST', {
+                'points': JSON.stringify(props.points)
+            }, response => {
+                if (response.success){
+                    url = 'http://192.168.0.100/b/' + response.data.board_url
+                } else {
+                    console.log('error on fetch POST /board: ', response.error.message)
+                }
+
+                props.changeUrl(url)
+
+                router.push(url, undefined, {shallow: true})
+            })
+        } else {
+            props.changeUrl('http://192.168.0.100/b/' + props.url)
+        }
+        
+        props.toggleShow()
     }
 
     function clearBoard (event) {
@@ -34,10 +59,10 @@ export const Toolbar = props => {
     <div className={styles.toolbar}>
         <div className={styles.toolbarBlock}>
         - Операции -<br/>
-            <button className={styles.saveButton} id="saveButton" onClick={saveCanvas}>
+            <button className={styles.shareButton} onClick={shareBoard}>
             Поделиться
             </button>
-            <button className={styles.clearButton} id="clearButton" onClick={clearBoard}>
+            <button className={styles.clearButton} onClick={clearBoard}>
             Очистить
             </button>
         </div>
@@ -57,10 +82,16 @@ export const Toolbar = props => {
     )
 }
 
+const mapStateToProps = state => ({
+    points: state.board.points
+})
+
 const mapDispatchToProps = {
     changeBrushColor,
     changeBrushWidth,
-    clearBoard
+    clearBoard,
+    toggleShow,
+    changeUrl
 }
 
-export default connect(Object, mapDispatchToProps)(Toolbar);
+export default connect(mapStateToProps, mapDispatchToProps)(Toolbar);
