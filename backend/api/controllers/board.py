@@ -34,7 +34,7 @@ def get_board():
     try:
         board_obj = Board.query.filter_by(url=board_url).one()
     except NoResultFound:
-        err = "Didn't found board with url '{}'".format(board_url)
+        err = "Didn't find board with url '{}'".format(board_url)
         return send_error_response(404, err)
 
     board = {"board_url": board_obj.url, "board_data": board_obj.data}
@@ -79,7 +79,7 @@ def update_board():
         try:
             board_obj = Board.query.filter_by(url=board_url).one()
         except NoResultFound:
-            err = "Didn't found board with url '{}'".format(board_url)
+            err = "Didn't find board with url '{}'".format(board_url)
             return send_error_response(404, err)
 
         new_data: dict = deepcopy(board_obj.data)
@@ -110,7 +110,7 @@ def update_board():
         try:
             Board.query.filter_by(url=board_url).one()
         except NoResultFound:
-            err = "Didn't found board with url '{}'".format(board_url)
+            err = "Didn't find board with url '{}'".format(board_url)
             return send_error_response(404, err)
 
         try:
@@ -125,11 +125,12 @@ def update_board():
         err = "Invalid action type, choose from ['BOARD_ADD_PIC', 'BOARD_CLEAR', 'BOARD_INIT_POINTS']"
         return send_error_response(400, err)
 
-    updated_record = {
-        k: v for k, v in updated_obj.__dict__.items() if k in ["url", "data"]
-    }
-
-    return send_success_response(updated_record)
+    return send_success_response(
+        {
+            "board_url": updated_obj.url,
+            "board_data": updated_obj.data,
+        }
+    )
 
 
 def create_board():
@@ -179,8 +180,8 @@ def delete_board():
 
     try:
         if not Board.delete({"url": board_url}):
-            err = "Didn't found board with url '{}'".format(board_url)
-            return send_error_response(400, err)
+            err = "Didn't find board with url '{}'".format(board_url)
+            return send_error_response(404, err)
     except Exception as err:
         return send_error_response(400, str(err))
 

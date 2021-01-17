@@ -1,10 +1,10 @@
-from flask import Flask, request
-from flask import current_app as app
-from settings.constants import URI_PREFIX
+from flask import Flask, request, Blueprint
 from controllers import board
 
+board_bp = Blueprint("board_blueprint", __name__)
 
-@app.route("{}/board".format(URI_PREFIX), methods=["GET", "PUT", "POST", "DELETE"])
+
+@board_bp.route("/board", methods=("GET", "PUT", "POST", "DELETE"))
 def board_methods():
     if request.method == "GET":
         return board.get_board()
