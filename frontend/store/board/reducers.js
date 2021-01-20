@@ -19,7 +19,9 @@ export const boardReducer = (state = initialState, action) => {
 
         case BOARD_ADD_POINT_TO_LAST_PIC:
             return produce(state, draft => {
-                draft.points[action.payload.key][ draft.points[action.payload.key].length - 1 ].push(action.payload.point)
+                if (draft.points.hasOwnProperty(action.payload.key)){
+                    draft.points[action.payload.key][ draft.points[action.payload.key].length - 1 ].push(action.payload.point)
+                }
             })
    
         case BOARD_CLEAR:
