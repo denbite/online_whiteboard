@@ -1,5 +1,5 @@
 import '../styles/globals.css'
-import { createStore, applyMiddleware } from 'redux';
+import { createStore } from 'redux';
 import { rootReducer } from '../store/reducers';
 import { Provider } from 'react-redux';
 import { composeWithDevTools } from 'redux-devtools-extension';

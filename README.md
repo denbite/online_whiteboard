@@ -32,16 +32,12 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 
 ## How to use
 
-### [DESKTOP]:
+### [DESKTOP, MOBILE]:
 
-- Click and **move** mouse for drawing picture
+- Click (tap) and **move** mouse for drawing picture
 - Choose brush color and width on toolbar block
 - Click **Clear** button to delete all pictures from board
 - Click **Share** button to generate link that you can share to friends and draw pictures together
-
-### [MOBILE]:
-
-**WILL BE SOON, FUTURE FEATURE**
 
 ## About the project.
 
@@ -66,7 +62,7 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 
 ### DevOps
 
-- I used Docker to build a microservice application
+- I used `Docker` to build a microservice application
 - List of microservices you can see in file `docker-compose.yml`
 
 ## Project setup

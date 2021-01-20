@@ -12,6 +12,7 @@ export const Board = props => {
     const canvas_ref = useRef(null);
 
     function createNewPicEvent(e) {
+
         // put to store empty array as "width.color": [..., []] for adding new points in future
         props.createNewPic({
             width: currentBrushWidth,
@@ -19,13 +20,13 @@ export const Board = props => {
         })
     }
     
-    function addPointToLastPicEvent(e) {
-        if (e.buttons !== 1) return;
-
+    function addPointToLastPicEvent(e) {     
+        if (e.buttons !== 1 && e.touches === undefined) return;
+        
         // put to store one point as "width.color": [[...], [..., {x, y}]]
         props.addPointToLastPic({
-            x: e.clientX - e.target.offsetLeft,
-            y: e.clientY - e.target.offsetTop
+            x: (e.type == 'mousemove') ? (e.clientX - e.target.offsetLeft) : (e.touches[0].clientX - e.target.offsetLeft),
+            y: (e.type == 'mousemove') ? (e.clientY - e.target.offsetTop) : (e.touches[0].clientY - e.target.offsetTop),
         }, {
             width: currentBrushWidth,
             color: currentBrushColor,
@@ -35,16 +36,12 @@ export const Board = props => {
     function saveLastPic(e) {
         if (!props.websocket || !props.url) return;
 
-        console.log('event mouseup')
-
         let key = __transformBrushToKey({
             width: currentBrushWidth,
             color: currentBrushColor
         })
 
         let lastPic = store_points[key][ store_points[key].length - 1 ]
-
-        console.log(lastPic)
 
         fetchApi('/board', 'PUT', {
                         board_url: props.url,
@@ -115,7 +112,7 @@ export const Board = props => {
 
     return (
         <div className={styles.canvasContainer}>
-                <canvas onMouseUp={saveLastPic} onMouseDown={createNewPicEvent} onMouseMove={addPointToLastPicEvent} className={styles.canvas} id="drawingCanvas" ref={canvas_ref}>
+                <canvas onTouchStart={createNewPicEvent} onTouchMove={addPointToLastPicEvent} onTouchEnd={saveLastPic} onMouseUp={saveLastPic} onMouseDown={createNewPicEvent} onMouseMove={addPointToLastPicEvent} className={styles.canvas} id="drawingCanvas" ref={canvas_ref}>
                 </canvas>
             </div>
         )
