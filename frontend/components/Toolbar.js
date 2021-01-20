@@ -12,7 +12,7 @@ export const Toolbar = props => {
     const router = useRouter()
 
     function shareBoard (event) {
-        let url = 'http://192.168.0.100/'
+        let url = process.env.NEXT_PUBLIC_FRONTEND_HOST
 
         if (!props.url){
             // fetch api, create board and insert board_url
@@ -20,7 +20,7 @@ export const Toolbar = props => {
                 'points': JSON.stringify(props.points)
             }, response => {
                 if (response.success){
-                    url = 'http://192.168.0.100/b/' + response.data.board_url
+                    url += '/b/' + response.data.board_url
                 } else {
                     console.log('error on fetch POST /board: ', response.error.message)
                 }
@@ -30,7 +30,7 @@ export const Toolbar = props => {
                 router.push(url, undefined, {shallow: true})
             })
         } else {
-            props.changeUrl('http://192.168.0.100/b/' + props.url)
+            props.changeUrl(url + '/b/' + props.url)
         }
         
         props.toggleShow()

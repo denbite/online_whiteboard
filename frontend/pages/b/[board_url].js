@@ -22,7 +22,7 @@ export default function SyncBoard() {
             } else {
               console.log(response.error.message);
 
-              router.push('http://192.168.0.100', undefined, {shallow:true})
+              router.push(process.env.NEXT_PUBLIC_FRONTEND_HOST, undefined, {shallow:true})
 
               dispatch(changeMessage("Board didn't find"))
               dispatch(toggleShow())
@@ -34,7 +34,7 @@ export default function SyncBoard() {
         }
       )
 
-    const websocket = new WebSocket("ws://192.168.0.100:8001/board/" + board_url);
+    const websocket = new WebSocket( process.env.NEXT_PUBLIC_WS_HOST + "/board/" + board_url);
 
     websocket.onmessage = function (event) {
 

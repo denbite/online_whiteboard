@@ -1,4 +1,3 @@
-const HOST = 'http://192.168.0.100:8000/api'
 
 
 /**
@@ -11,8 +10,8 @@ const HOST = 'http://192.168.0.100:8000/api'
  * 
  */
 export const fetchApi = (prefix, method, body, response_callback) => {
-
-    const url = HOST + prefix + ((method === 'GET') ?  ('?' + new URLSearchParams(body)) : '')
+    
+    const url = process.env.NEXT_PUBLIC_API_HOST + prefix + ((method === 'GET') ?  ('?' + new URLSearchParams(body)) : '')
 
     fetch( url, {
                 method: method,

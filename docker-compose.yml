@@ -48,11 +48,6 @@ services:
     build: ./frontend
     ports:
       - 80:80
-    environment:
-      APP_ENV: dev
-      APP_API_URL: api:8000
-      APP_WS_URL: websocket:8001
-      APP_FRONTEND_PORT: 80
     volumes:
       - ./frontend:/app
     depends_on:

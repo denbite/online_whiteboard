@@ -6,4 +6,4 @@ RUN npm install --frozen-lockfile
 
 EXPOSE 80
 
-CMD ["npm", "run", "dev"]
+CMD [ "npm", "run", "dev" ]
