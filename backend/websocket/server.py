@@ -1,6 +1,7 @@
 import asyncio
 import websockets
 import logging
+from json import loads
 from websockets import WebSocketServerProtocol
 
 logging.basicConfig(level=logging.INFO)
@@ -57,10 +58,34 @@ class Server:
 
     async def distribute(self, ws: WebSocketServerProtocol, board_url: str) -> None:
         async for message in ws:
-            await self._send_to_clients(message, ws, board_url)
             logging.info(
                 "received message: {} from {}".format(message, ws.remote_address)
             )
+
+            if not self._validate_message(message):
+                continue
+
+            await self._send_to_clients(message, ws, board_url)
+
+    def _validate_message(self, message: str) -> bool:
+        try:
+            data = loads(message)
+        except:
+            return False
+
+        if "action" not in data or data["action"] not in ["saveLastPic", "clearBoard"]:
+            return False
+
+        if data["action"] == "saveLastPic":
+            if (
+                "brush" not in data
+                or "color" not in data["brush"]
+                or "width" not in data["brush"]
+                or "pic" not in data
+            ):
+                return False
+
+        return True
 
     async def _send_to_clients(
         self, message: str, current_ws: WebSocketServerProtocol, board_url: str
