@@ -4,7 +4,7 @@ from controllers import board
 board_bp = Blueprint("board_blueprint", __name__)
 
 
-@board_bp.route("/board", methods=("GET", "PUT", "POST", "DELETE"))
+@board_bp.route("/board", methods=["GET", "PUT", "POST", "DELETE"])
 def board_methods():
     if request.method == "GET":
         return board.get_board()

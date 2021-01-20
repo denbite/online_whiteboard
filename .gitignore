@@ -132,6 +132,7 @@ dmypy.json
 Pipfile
 Pipfile.lock
 .DS_Store
-.vscode/settings.json
+/.vscode
 
-/old_frontend
+# db volume
+/postresql

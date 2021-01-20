@@ -7,10 +7,19 @@ logging.basicConfig(level=logging.INFO)
 
 
 class Server:
-    # {
-    # 'board_url': set(...)
-    # }
-    clients = {}
+
+    """
+    Implementation of storage with clients, methods for working with them and requests handler
+    """
+
+    def __init__(self):
+        """
+        self.clients = {
+            'board_url': set(...),
+            'board_url2': set(...),
+        }
+        """
+        self.clients = {}
 
     async def register(self, ws: WebSocketServerProtocol, board_url: str) -> None:
         if board_url not in self.clients:
@@ -48,12 +57,12 @@ class Server:
 
     async def distribute(self, ws: WebSocketServerProtocol, board_url: str) -> None:
         async for message in ws:
-            await self.send_to_clients(message, ws, board_url)
+            await self._send_to_clients(message, ws, board_url)
             logging.info(
                 "received message: {} from {}".format(message, ws.remote_address)
             )
 
-    async def send_to_clients(
+    async def _send_to_clients(
         self, message: str, current_ws: WebSocketServerProtocol, board_url: str
     ) -> None:
         if (

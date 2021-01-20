@@ -21,12 +21,13 @@ export const Modal = props => {
         <div className={styles.modal}>
             <div className={styles.container}>
                 <a onClick={hideModal} title="Close" className={styles.modalClose}>Close</a>
-                <h1 className={styles.headerText}>Поделиться доской</h1>
-                <div className={styles.mainText}>Эта ссылка даёт воможность другим редактировать доску в реальном времени. Вы можете пригласить неограниченное количество людей.</div>
+                <h1 className={styles.headerText}>Share board</h1>
+                <div className={styles.mainText}>
+                    This link allows others to edit this board in realtime. Note, you can share this to unlimited number of people.</div>
                 <div className={styles.row}>
-                    <small className={styles.smallText}>Поделиться ссылкой</small>
+                    <small className={styles.smallText}>Share: </small>
                     <input className={styles.inputLink} readOnly={true} placeholder={url}></input>
-                    <button onClick={copyUrl} className={styles.buttonShare}> Скопировать ссылку </button>
+                    <button onClick={copyUrl} className={styles.buttonShare}> Copy link </button>
                 </div>
             </div>
         </div>

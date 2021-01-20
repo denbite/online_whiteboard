@@ -24,7 +24,7 @@ export default function SyncBoard() {
 
               router.push('http://192.168.0.100', undefined, {shallow:true})
 
-              dispatch(changeMessage("Доска не найдена"))
+              dispatch(changeMessage("Board didn't find"))
               dispatch(toggleShow())
 
               setTimeout(() => {

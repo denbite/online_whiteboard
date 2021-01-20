@@ -6,4 +6,3 @@ URL_PREFIX = "/api"
 
 # date of birth format
 POSTGRE_DATE_FORMAT = "%Y-%m-%d"
-DATE_FORMAT = "%d.%m.%Y"
