@@ -34,6 +34,8 @@ export default function SyncBoard() {
         }
       )
 
+    console.log('ws: ', process.env.NEXT_PUBLIC_WS_HOST)
+
     const websocket = new WebSocket( process.env.NEXT_PUBLIC_WS_HOST + "/board/" + board_url);
 
     websocket.onmessage = function (event) {

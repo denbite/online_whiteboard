@@ -1,0 +1,12 @@
+version: "3"
+
+services:
+  api:
+    restart: always
+    environment:
+      - FLASK_ENV=production
+      - FLASK_SECRET_KEY=${API_SECRET_KEY}
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.production

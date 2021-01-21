@@ -67,10 +67,23 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 
 ## Project setup
 
-Run project:
+Run project (development):
 
 ```
 docker-compose up --build
+```
+
+Run project (production):
+
+```
+# create secret key
+python -c 'import os; print(os.urandom(24).hex())'
+
+# setup environment variables
+cp .env.example .env
+nano .env
+
+docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
 ```
 
 Run REST API tests (if container is up):

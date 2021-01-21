@@ -3,6 +3,7 @@ from flask_sqlalchemy import SQLAlchemy
 from flask_cors import CORS
 from settings.constants import DB_URL, URL_PREFIX
 from core import db
+from os import getenv, environ
 
 
 def create_app():
@@ -13,6 +14,8 @@ def create_app():
     app.config[
         "SQLALCHEMY_TRACK_MODIFICATIONS"
     ] = False  # silence the deprecation warning
+
+    app.secret_key = getenv("FLASK_SECRET_KEY")
 
     db.init_app(app)
 
@@ -26,7 +29,15 @@ def create_app():
         return app
 
 
-app = create_app()
-
 if __name__ == "__main__":
-    app.run(debug=True, host="0.0.0.0", port=8000)
+
+    mode = getenv("FLASK_ENV", "development")
+
+    app = create_app()
+
+    if mode == "production":
+        from waitress import serve
+
+        serve(app, host="0.0.0.0", port=getenv("FLASK_PORT", 8000))
+    else:
+        app.run(debug=True, host="0.0.0.0", port=getenv("FLASK_PORT", 8000))

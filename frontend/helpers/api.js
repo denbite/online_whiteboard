@@ -10,7 +10,7 @@
  * 
  */
 export const fetchApi = (prefix, method, body, response_callback) => {
-    
+
     const url = process.env.NEXT_PUBLIC_API_HOST + prefix + ((method === 'GET') ?  ('?' + new URLSearchParams(body)) : '')
 
     fetch( url, {

@@ -14,7 +14,9 @@ export const Modal = props => {
     }
 
     function copyUrl(event){
-        copy(url);
+        if (url){
+            copy(url);
+        }
     }
 
     return show ? (

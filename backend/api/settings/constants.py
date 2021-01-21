@@ -1,7 +1,7 @@
-import os
+from os import getenv
 
 # connection credentials
-DB_URL = os.environ["DB_URL"]
+DB_URL = getenv("DB_URL", "postgresql+psycopg2://user:password@db:5432/db")
 URL_PREFIX = "/api"
 
 # date of birth format
