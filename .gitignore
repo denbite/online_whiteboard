@@ -138,3 +138,4 @@ Pipfile.lock
 
 # db volume
 /postresql
+kubectl.sha256

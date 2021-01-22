@@ -70,7 +70,7 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 Run project (development):
 
 ```
-docker-compose up --build
+docker-compose -f docker-compose.prod.yml -f docker-compose.dev.yml up --build
 ```
 
 Run project (production):
@@ -83,13 +83,13 @@ python -c 'import os; print(os.urandom(24).hex())'
 cp .env.example .env
 nano .env
 
-docker-compose -f docker-compose.yml -f docker-compose.prod.yml up --build
+docker-compose -f docker-compose.prod.yml up --build
 ```
 
 Run REST API tests (if container is up):
 
 ```
-docker-compose exec api pytest
+docker-compose -f docker-compose.prod.yml -f docker-compose.dev.yml exec api pytest
 ```
 
 Run REST API tests (if container is down):

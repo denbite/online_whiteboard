@@ -1,0 +1,13 @@
+version: "3"
+
+services:
+  api:
+    restart: always
+    environment:
+      - FLASK_ENV=development
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile.development
+    volumes:
+      - ./frontend:/app
