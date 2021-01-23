@@ -1,27 +1,18 @@
 <h1 align="center">Online Whiteboard - Realtime Drawing</h1>
 
-<!-- <p align="center">
+<p align="center">
 
-<img src="https://img.shields.io/npm/dy/silentlad">
+<img src="https://img.shields.io/github/checks-status/capcatd/online_whiteboard/master?label=build">
 
-<img src="https://img.shields.io/badge/made%20by-silentlad-blue.svg" >
+<img src="https://img.shields.io/github/commit-activity/w/capcatd/online_whiteboard">
 
-<img src="https://img.shields.io/badge/vue-2.2.4-green.svg">
+<img src="https://img.shields.io/github/repo-size/capcatd/online_whiteboard">
 
-<img src="https://badges.frapsoft.com/os/v1/open-source.svg?v=103" >
+<img src="https://img.shields.io/github/license/capcatd/online_whiteboard">
 
-<img src="https://beerpay.io/silent-lad/VueSolitaire/badge.svg?style=flat">
+</p>
 
-<img src="https://img.shields.io/github/stars/silent-lad/VueSolitaire.svg?style=flat">
-
-<img src="https://img.shields.io/github/languages/top/silent-lad/VueSolitaire.svg">
-
-<img src="https://img.shields.io/github/issues/silent-lad/VueSolitaire.svg">
-
-<img src="https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat">
-</p> -->
-
-<!-- <h2 align="center"><a  href="https://solitairevue.firebaseapp.com">Live Demo</a></h2> -->
+<h2 align="center"><a  href="http://67.207.76.234">Live Demo</a></h2>
 
 ## Description
 
@@ -64,6 +55,7 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 
 - I used `Docker` to build a microservice application
 - List of microservices you can see in file `docker-compose.yml`
+- I used `Kubernetes` to deploy production version (all configs you can see in `/k8s`)
 
 ## Project setup
 
