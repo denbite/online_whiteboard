@@ -5,9 +5,25 @@ services:
     restart: always
     environment:
       - FLASK_ENV=development
+    volumes:
+      - ./backend/api:/app
+  websocket:
+    volumes:
+      - ./backend/websocket:/app
+  adminer:
+    image: adminer
+    restart: always
+    ports:
+      - ${ADMINER_PORT-8080}:${ADMINER_PORT-8080}
+    depends_on:
+      - db
   frontend:
     build:
       context: ./frontend
       dockerfile: Dockerfile.development
+      args:
+        API_URL: ${API_URL-http://192.168.0.100:8000/api}
+        WS_URL: ${WS_URL-ws://192.168.0.100:8001}
+        FRONTEND_URL: ${FRONTEND_URL-http://192.168.0.100}
     volumes:
       - ./frontend:/app

@@ -38,6 +38,6 @@ if __name__ == "__main__":
     if mode == "production":
         from waitress import serve
 
-        serve(app, host="0.0.0.0", port=getenv("FLASK_PORT", 8000))
+        serve(app, host="0.0.0.0", port=8000)
     else:
-        app.run(debug=True, host="0.0.0.0", port=getenv("FLASK_PORT", 8000))
+        app.run(debug=True, host="0.0.0.0", port=8000)
