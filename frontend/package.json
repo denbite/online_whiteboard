@@ -3,9 +3,9 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p",
+    "dev": "next dev",
     "build": "next build",
-    "start": "next start -p"
+    "start": "next start"
   },
   "dependencies": {
     "copy-to-clipboard": "3.3.1",
