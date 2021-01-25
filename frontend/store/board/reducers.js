@@ -23,10 +23,10 @@ export const boardReducer = (state = initialState, action) => {
                     draft.points[action.payload.key][ draft.points[action.payload.key].length - 1 ].push(action.payload.point)
                 }
             })
-   
+
         case BOARD_CLEAR:
             return {...state, points: {}}
-        
+
         case BOARD_INIT_POINTS:
             return {...state, points: action.payload}
 

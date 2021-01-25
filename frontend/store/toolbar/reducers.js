@@ -12,7 +12,7 @@ export const toolbarReducer = (state = initialState, action) => {
         case TOOLBAR_CHANGE_BRUSH_WIDTH:
             return { ...state, brushWidth: action.payload }
 
-        case TOOLBAR_CHANGE_BRUSH_COLOR: 
+        case TOOLBAR_CHANGE_BRUSH_COLOR:
             return { ...state, brushColor: action.payload}
     }
 

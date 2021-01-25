@@ -12,7 +12,7 @@ export const createNewPic = (brush) => ({
 export const addPointToLastPic = (point, brush) => ({
     type: BOARD_ADD_POINT_TO_LAST_PIC,
     payload: {
-        point, 
+        point,
         key: __transformBrushToKey(brush)
     }
 })

@@ -48,9 +48,9 @@ export default function SyncBoard() {
 
             case 'saveLastPic':
               const {pic, brush} = JSON.parse(event.data);
-      
+
               return dispatch(addPic(pic, brush))
-            
+
             default:
               return console.log('no one action is correct')
         }

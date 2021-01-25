@@ -5,7 +5,7 @@
  * @param {string} method - HTTP method
  * @param {object} body - request body
  * @param {function} response_callback - callback function when receive response
- * 
+ *
  */
 export const fetchApi = (prefix, method, body, response_callback) => {
 
@@ -24,4 +24,3 @@ export const fetchApi = (prefix, method, body, response_callback) => {
             .then(response_callback)
 
 }
-

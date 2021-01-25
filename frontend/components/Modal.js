@@ -34,4 +34,4 @@ export const Modal = props => {
             </div>
         </div>
     ) : null
-} 
+}

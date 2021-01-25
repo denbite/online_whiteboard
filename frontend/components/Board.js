@@ -19,10 +19,10 @@ export const Board = props => {
             color: currentBrushColor,
         })
     }
-    
-    function addPointToLastPicEvent(e) {     
+
+    function addPointToLastPicEvent(e) {
         if (e.buttons !== 1 && e.touches === undefined) return;
-        
+
         // put to store one point as "width.color": [[...], [..., {x, y}]]
         props.addPointToLastPic({
             x: (e.type == 'mousemove') ? (e.clientX - e.target.offsetLeft) : (e.touches[0].clientX - e.target.offsetLeft),
@@ -68,12 +68,12 @@ export const Board = props => {
     useEffect(() => {
         function initContext(canvas) {
             let ctx = canvas.getContext('2d');
-        
+
             ctx.canvas.width = window.innerWidth;
             ctx.canvas.height = window.innerHeight;
-        
+
             ctx.lineCap = 'round'
-        
+
             return ctx
         }
 
@@ -107,7 +107,7 @@ export const Board = props => {
                 }
             } )
         }
-    
+
     }, [store_points]);
 
     return (
@@ -125,7 +125,7 @@ const mapStateToProps = (state) => ({
 })
 
 const mapDispatchToProps = {
-    createNewPic, addPointToLastPic, 
+    createNewPic, addPointToLastPic,
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(Board);
