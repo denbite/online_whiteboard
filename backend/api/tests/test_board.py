@@ -1,10 +1,12 @@
-from . import client
+from json import dumps, loads
+
 import pytest
 from flask.wrappers import Response
-from json import loads, dumps
 from settings.constants import URL_PREFIX
 
-ROUTE_BOARD_API = "{}/board".format(URL_PREFIX)
+from . import client  # noqa
+
+ROUTE_BOARD_API = f"{URL_PREFIX}/board"
 
 
 def pytest_configure():
@@ -52,7 +54,9 @@ def _check_response_structure(
     )
 
     if expected_success:
-        assert "data" in response_data, "invalid response structure, must be 'data' key"
+        assert (
+            "data" in response_data
+        ), "invalid response structure, must be 'data' key"
     else:
         assert (
             "error" in response_data
@@ -70,9 +74,9 @@ def _check_response_structure(
             response_data["error"]["code"] == status_code
         ), "status codes must be the same"
 
-    assert status_code == expected_code, "status code must be {exp}, got {got}".format(
-        got=status_code, exp=expected_code
-    )
+    assert (
+        status_code == expected_code
+    ), f"status code must be {expected_code}, got {status_code}"
 
 
 def test_create(client):
@@ -144,7 +148,9 @@ def test_update(client):
     Test action BOARD_ADD_PIC
     """
 
-    rv: Response = client.put(ROUTE_BOARD_API, data={"action": "BOARD_ADD_PIC"})
+    rv: Response = client.put(
+        ROUTE_BOARD_API, data={"action": "BOARD_ADD_PIC"}
+    )
     _check_response_structure(rv.data, rv.status_code, False, 400)
 
     rv: Response = client.put(
@@ -259,12 +265,16 @@ def test_delete(client):
 
     # invalid board_url
     rv: Response = client.delete(
-        ROUTE_BOARD_API, data={"board_url": "{}1".format(pytest.board_url)}
+        ROUTE_BOARD_API, data={"board_url": f"{pytest.board_url}1"}
     )
     _check_response_structure(rv.data, rv.status_code, False, 404)
 
-    rv: Response = client.delete(ROUTE_BOARD_API, data={"board_url": pytest.board_url})
+    rv: Response = client.delete(
+        ROUTE_BOARD_API, data={"board_url": pytest.board_url}
+    )
     _check_response_structure(rv.data, rv.status_code, True, 200)
 
-    rv: Response = client.delete(ROUTE_BOARD_API, data={"board_url": pytest.board_url})
+    rv: Response = client.delete(
+        ROUTE_BOARD_API, data={"board_url": pytest.board_url}
+    )
     _check_response_structure(rv.data, rv.status_code, False, 404)

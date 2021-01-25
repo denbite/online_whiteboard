@@ -1,5 +1,4 @@
 from core import db
-from datetime import date
 
 
 def commit(obj):
@@ -12,7 +11,7 @@ def commit(obj):
     return obj
 
 
-class Model(object):
+class Model:
     @classmethod
     def create(cls, **kwargs):
         """

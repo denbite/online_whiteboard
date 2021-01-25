@@ -1,6 +1,7 @@
 from core import db
-from .base import Model
 from sqlalchemy.dialects.postgresql import JSON
+
+from .base import Model
 
 
 class Board(Model, db.Model):
@@ -11,7 +12,9 @@ class Board(Model, db.Model):
     data = db.Column(JSON, nullable=False, default={})
 
     updated_at = db.Column(
-        db.DateTime, server_default=db.func.now(), server_onupdate=db.func.now()
+        db.DateTime,
+        server_default=db.func.now(),
+        server_onupdate=db.func.now(),
     )
     created_at = db.Column(db.DateTime, server_default=db.func.now())
 
@@ -21,4 +24,4 @@ class Board(Model, db.Model):
     )
 
     def __repr__(self):
-        return "<Board -> {}>".format(self.url)
+        return f"<Board -> {self.url}>"

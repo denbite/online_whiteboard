@@ -1,11 +1,12 @@
-from . import *
-import os, tempfile, pytest
+import os
+import tempfile
+
+import pytest
+from entry import create_app
 from werkzeug.test import Client
 
-from entry import create_app
 
-
-@pytest.fixture
+@pytest.fixture()
 def client() -> Client:
     app = create_app()
     db_fd, app.config["DATABASE"] = tempfile.mkstemp()

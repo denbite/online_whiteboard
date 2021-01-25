@@ -1,5 +1,5 @@
-from flask import Flask, request, Blueprint
 from controllers import board
+from flask import Blueprint, request
 
 board_bp = Blueprint("board_blueprint", __name__)
 
