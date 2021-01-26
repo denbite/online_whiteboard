@@ -1,13 +1,20 @@
+"""Implement controller testing."""
 import os
 import tempfile
 
 import pytest
 from entry import create_app
-from werkzeug.test import Client
 
 
 @pytest.fixture()
-def client() -> Client:
+def client():
+    """
+    Create pytest fixture with test client instance.
+
+    Yields:
+        werkzeug.test.Client: Test app client.
+
+    """
     app = create_app()
     db_fd, app.config["DATABASE"] = tempfile.mkstemp()
     app.config["TESTING"] = True

@@ -3,7 +3,7 @@ from os import getenv
 from core import db
 from flask import Flask
 from flask_cors import CORS
-from settings.constants import DB_URL, URL_PREFIX
+from settings import DB_URL, URL_PREFIX
 
 
 def create_app():

@@ -3,85 +3,119 @@ import logging
 from json import loads
 
 import websockets
-from websockets import WebSocketServerProtocol
 
 logging.basicConfig(level=logging.INFO)
 
 
 class Server:
-
     """
-    Implementation of storage with clients, methods for working with them
-    and requests handler
+    Implement WebSocket Protocol with rooms.
+
+    Attributes:
+        clients (dict of set): All clients divided by rooms.
+
     """
 
     def __init__(self):
-        """
-        self.clients = {
-            'board_url': set(...),
-            'board_url2': set(...),
-        }
-        """
+        """Init clients as empty dict."""
         self.clients = {}
 
-    async def register(
-        self, ws: WebSocketServerProtocol, board_url: str
-    ) -> None:
-        if board_url not in self.clients:
-            self.clients[board_url] = set()
+    async def register(self, ws, room_id):
+        """
+        Add new client to the room.
 
-        self.clients[board_url].add(ws)
+        Args:
+            ws (websockets.WebSocketServerProtocol): Client instance.
+            room_id (str): Room identifier.
+
+        """
+        # check if exists this room
+        if room_id not in self.clients:
+            self.clients[room_id] = set()
+
+        self.clients[room_id].add(ws)
         logging.info(f"{ws.remote_address} connected")
 
-    async def unregister(
-        self, ws: WebSocketServerProtocol, board_url: str
-    ) -> None:
+    async def unregister(self, ws, room_id):
+        """
+        Remove client from the room.
+
+        Args:
+            ws (websockets.WebSocketServerProtocol): Client instance.
+            room_id (str): Room identifier.
+
+        """
         await ws.close()
-        self.clients[board_url].remove(ws)
+
+        self.clients[room_id].remove(ws)
         logging.info(f"{ws.remote_address} disconnected")
 
-        if not self.clients[board_url]:
-            self.clients.pop(board_url)
+        # if room is empty -> delete it
+        if not self.clients[room_id]:
+            self.clients.pop(room_id)
 
-    async def main_handler(
-        self, ws: WebSocketServerProtocol, uri: str
-    ) -> None:
+    async def main_handler(self, ws, url):
+        """
+        Handle the lifecycle of a WebSocket client connection.
 
-        logging.info(f"uri: {uri} handled from {ws.remote_address}")
+        Args:
+            ws (websockets.WebSocketServerProtocol): Client instance.
+            url (str): Url query.
 
-        if not uri.startswith("/board/"):
+        """
+        logging.info(f"url: {url} handled from {ws.remote_address}")
+
+        # checks if url is correct
+        if not url.startswith("/board/"):
             await ws.close()
 
-        board_url = uri[7:]
+        # get room_id from url query
+        room_id = url[7:]
 
-        if ws not in self.clients:
-            await self.register(ws, board_url)
+        await self.register(ws, room_id)
 
         try:
-            await self.distribute(ws, board_url)
+            await self.distribute(ws, room_id)
         except Exception as err:
             logging.info(f"ERROR on main_handler: {str(err)}")
         finally:
-            await self.unregister(ws, board_url)
+            await self.unregister(ws, room_id)
 
-    async def distribute(
-        self, ws: WebSocketServerProtocol, board_url: str
-    ) -> None:
+    async def distribute(self, ws, room_id):
+        """
+        Wait for new messages and then distribute it.
+
+        Args:
+            ws (websockets.WebSocketServerProtocol): Client instance.
+            room_id (str): Room identifier.
+
+        """
         async for message in ws:
             logging.info(
-                f"received message: {message} from {ws.remote_address}"
+                f"received message: {message[:100]} from {ws.remote_address}"
             )
 
             try:
                 if self._validate_message(message):
-                    await self._send_to_clients(message, ws, board_url)
+                    await self._send_to_clients(message, ws, room_id)
             except Exception as err:
-                logging.info(f"ERROR on validation: {str(err)}")
+                logging.info(f"ERROR on distribute: {str(err)}")
 
     def _validate_message(self, message: str) -> bool:
+        """
+        Validate structure of received message.
 
+        Args:
+            message (str): Received data from client.
+
+        Returns:
+            bool: True if OK, otherwise False
+
+        """
+        # convert stringified json to dict
         data = loads(message)
 
+        # check message structure
         if "action" not in data or data["action"] not in [
             "saveLastPic",
             "clearBoard",
@@ -89,34 +123,51 @@ class Server:
             return False
 
         if data["action"] == "saveLastPic":
+            # check data when action 'saveLastPic'
             if (
-                "brush" not in data
-                or "color" not in data["brush"]
-                or "width" not in data["brush"]
-                or "pic" not in data
+                "pic" in data
+                and "brush" in data
+                and "color" in data["brush"]
+                and "width" in data["brush"]
             ):
-                return False
+                return True
 
-        return True
+        elif data["action"] == "clearBoard":
+            return True
 
-    async def _send_to_clients(
-        self, message: str, current_ws: WebSocketServerProtocol, board_url: str
-    ) -> None:
+        return False
+
+    async def _send_to_clients(self, message, current_ws, room_id):
+        """
+        Distribute messages to clients.
+
+        Send messages to all clients in such room except sender.
+
+        Args:
+            message (str): Received data from client.
+            current_ws (websockets.WebSocketServerProtocol): Sender
+                client instance.
+            room_id (str): Room identifier.
+
+        """
+        # check if client exist to send messages
         if (
-            board_url in self.clients
-            and self.clients[board_url]
-            and len(self.clients[board_url]) > 1
+            room_id in self.clients
+            and self.clients[room_id]
+            and len(self.clients[room_id]) > 1
         ):
+            # send messages to all clients in this room except sender
             await asyncio.wait(
                 [
                     client.send(message)
-                    for client in self.clients[board_url]
+                    for client in self.clients[room_id]
                     if client != current_ws
                 ]
             )
 
 
 def start():
+    """Launch server."""
     server = Server()
     start_server = websockets.serve(server.main_handler, "127.0.0.1", 8001)
     loop = asyncio.get_event_loop()

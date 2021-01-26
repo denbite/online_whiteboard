@@ -34,28 +34,31 @@ Online whiteboard app that makes drawing, collaboration and sharing easy.
 
 ### Frontend
 
-- It built with `React.js`, `Next.js(SSR, routes)` and `Redux(client storage)`
+- It's built with `React.js`, `Next.js(SSR, routes)` and `Redux(client storage)`
 - Draw is implemented with default HTML5 tag - `<canvas>`
 - All your pictures are stored as arrays of points. This approach uses less memory than built-in canvas functions
 
 ### Backend -> REST API server
 
-- It built with `Python 3.7`, micro-framework `Flask` and `PostgreSQL` as data storage
+- It's built with `Python 3.7`, micro-framework `Flask` and `PostgreSQL` as data storage
+- The written code complies with the `PEP8` specification
 - API has scalable structure where each folder is responsible for it's own part of the application logic
 - I used `PostgreSQL` as Database because it allow to store JSON-data
 - Made unit-tests with python library `pytest`. They are stored here: `/backend/api/tests`
 
 ### Backend -> Websockets server
 
-- It built with `Python 3.7` and `websockets` library
+- It's built with `Python 3.7` and `websockets` library
+- The written code complies with the `PEP8` specification
 - It has rooms that divide connected clients by `board_url` into groups
 - It has validation for receiving messages that reject messages with invalid structure
 
 ### DevOps
 
 - I used `Docker` to build a microservice application
-- List of microservices you can see in file `docker-compose.yml`
+- List of microservices you can see in file `docker-compose.prod.yml`
 - I used `Kubernetes` to deploy production version (all configs you can see in `/k8s`)
+- I used `pre-commit` to format python code and check it for mistakes
 
 ## Project setup
 

@@ -40,7 +40,9 @@ repos:
       hooks:
           - id: yamlfmt
             exclude: (k8s/)
-    # - repo: https://github.com/PyCQA/pydocstyle
-    #   rev: 5.1.1
-    #   hooks:
-    #       - id: pydocstyle
+    - repo: https://github.com/PyCQA/pydocstyle
+      rev: 5.1.1
+      hooks:
+          - id: pydocstyle
+            args:
+                - --ignore=D100,D104,D105,D106,D203,D212,D213,D401,D406,D407,D413

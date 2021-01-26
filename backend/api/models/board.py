@@ -1,10 +1,19 @@
-from core import db
+from core import BaseModel, db
 from sqlalchemy.dialects.postgresql import JSON
 
-from .base import Model
 
+class Board(BaseModel, db.Model):
+    """
+    ORM model for table "board" that include columns.
 
-class Board(Model, db.Model):
+    Attributes:
+        url (str): Unique identifier.
+        data (dict): Arrays of points that uses for drawing board
+        updated_at (int): Time when record was updated last time
+        created_at (int): Time when record was created
+        __table_args__ (tuple): Indexes for current table
+    """
+
     __tablename__ = "board"
 
     url = db.Column(db.String, nullable=False, primary_key=True)

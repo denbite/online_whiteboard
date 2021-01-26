@@ -5,19 +5,27 @@ from json import loads
 from time import time
 
 from core.response import send_error_response, send_success_response
-from flask import Response
 from models import Board
 from sqlalchemy.orm.exc import NoResultFound
-
-from .parse_request import get_request_data
 
 logging.basicConfig(level=logging.INFO)
 
 
-def get_board() -> Response:
+def get_board(data):
+    """
+    Try to get data about the board by parameter 'board_url'.
 
-    data = get_request_data()
+    Function is called upon GET request, checks request
+    parameters and get data from DB if record exists
 
+    Args:
+        data (dict): Parameters from request query and body
+
+    Returns:
+        flask.Response with JSON-data regardless of success
+
+    """
+    # validate all required fields exists
     for required_field in ["board_url"]:
         if required_field not in data.keys():
             err = f"No '{required_field}' specified"
@@ -39,10 +47,22 @@ def get_board() -> Response:
     return send_success_response(board)
 
 
-def update_board() -> Response:
+def update_board(data):
+    """
+    Try to update board data in DB.
 
-    data = get_request_data()
+    Function is called upon PUT request, checks request
+    parameters for required fields and current action,
+    validate data for correct structure and
+    then update data in DB if such record exists
 
+    Args:
+        data (dict): Parameters from request query and body
+
+    Returns:
+        flask.Response with JSON-data regardless of success
+
+    """
     if "action" not in data.keys():
         err = "No 'action' specified"
         return send_error_response(400, err)
@@ -50,6 +70,7 @@ def update_board() -> Response:
     action = data["action"]
 
     if action == "BOARD_ADD_PIC":
+        # validate all required fields exists for this action
         for required_field in ["board_url", "data_delta", "key"]:
             if required_field not in data.keys():
                 err = f"No '{required_field}' specified"
@@ -95,7 +116,7 @@ def update_board() -> Response:
             return send_error_response(400, str(err))
 
     elif action == "BOARD_CLEAR":
-
+        # validate all required fields exists for this action
         for required_field in ["board_url"]:
             if required_field not in data.keys():
                 err = f"No '{required_field}' specified"
@@ -133,9 +154,24 @@ def update_board() -> Response:
     )
 
 
-def create_board() -> Response:
-    data = get_request_data()
+def create_board(data):
+    """
+    Try to create board record in DB.
 
+    Function is called upon POST request, checks request
+    parameters for required fields,
+    generates a new 'board_url' using sha256 algorithm
+    according to the current time and the received data,
+    then create record in DB
+
+    Args:
+        data (dict): Parameters from request query and body
+
+    Returns:
+        flask.Response with JSON-data regardless of success
+
+    """
+    # validate all required fields exists
     for required_field in ["points"]:
         if required_field not in data.keys():
             err = f"No '{required_field}' specified"
@@ -148,11 +184,13 @@ def create_board() -> Response:
 
     # todo: how to validate input points for correct structure?
 
+    # todo: fix case when generating 'board_url'
+    # at the same time and with empty data
+
     # generate new board_url
     first = sha256(str(time()).encode()).hexdigest()
     second = sha256(str(data).encode()).hexdigest()
-
-    board_url = "{}{}{}".format(first[:4], second[:8], first[-4:])
+    board_url = f"{first[:4]}{second[:8]}{first[-4:]}"
 
     try:
         obj = Board.create(**{"data": points, "url": board_url})
@@ -162,9 +200,22 @@ def create_board() -> Response:
     return send_success_response({"board_url": obj.url})
 
 
-def delete_board() -> Response:
-    data = get_request_data()
+def delete_board(data: dict):
+    """
+    Try to delete board record from DB.
 
+    Function is called upon DELETE request, checks request
+    parameters for required fields, then delete record
+    from DB if it exists
+
+    Args:
+        data (dict): Parameters from request query and body
+
+    Returns:
+        flask.Response with JSON-data regardless of success
+
+    """
+    # validate all required fields exists
     for required_field in ["board_url"]:
         if required_field not in data.keys():
             err = f"No '{required_field}' specified"
@@ -175,9 +226,8 @@ def delete_board() -> Response:
     except Exception as err:
         return send_error_response(400, str(err))
 
-    logging.info(board_url)
-
     try:
+        # checks if record with such 'board_url' exists in DB
         if not Board.delete({"url": board_url}):
             err = f"Didn't find board with url '{board_url}'"
             return send_error_response(404, err)
