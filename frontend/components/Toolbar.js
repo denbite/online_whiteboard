@@ -68,22 +68,24 @@ export const Toolbar = props => {
         </div>
         <div className={styles.toolbarBlock}>
         - Color -<br/>
-            <img onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_RED)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_red.gif" />
-            <img onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_GREEN)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_green.gif" />
-            <img onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_BLUE)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_blue.gif" />
+            <span onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_RED)} className={styles.redCircle + " " + (props.brushColor === actions.TOOLBAR_BRUSH_COLOR_RED ? styles.activeElement : "")} />
+            <span onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_GREEN)} className={styles.greenCircle + " " + (props.brushColor === actions.TOOLBAR_BRUSH_COLOR_GREEN ? styles.activeElement : "")} />
+            <span onClick={e => props.changeBrushColor(actions.TOOLBAR_BRUSH_COLOR_BLUE)} className={styles.blueCircle + " " + (props.brushColor === actions.TOOLBAR_BRUSH_COLOR_BLUE ? styles.activeElement : "")} />
         </div>
         <div className={styles.toolbarBlock}>
         - Width -<br/>
-            <img onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_LOW)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_thin.gif" />
-            <img onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_MIDDLE)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_medium.gif" />
-            <img onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_BIG)} className={styles.toolbarImgButton} src="http://professorweb.ru/downloads/pen_thick.gif" />
+            <span onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_LOW)} className={styles.lowWidth + " " + (props.brushWidth === actions.TOOLBAR_BRUSH_WIDTH_LOW ? styles.activeElement : "")} />
+            <span onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_MIDDLE)} className={styles.mediumWidth + " " + (props.brushWidth === actions.TOOLBAR_BRUSH_WIDTH_MIDDLE ? styles.activeElement : "")} />
+            <span onClick={e => props.changeBrushWidth(actions.TOOLBAR_BRUSH_WIDTH_BIG)} className={styles.bigWidth + " " + (props.brushWidth === actions.TOOLBAR_BRUSH_WIDTH_BIG ? styles.activeElement : "")} />
         </div>
     </div>
     )
 }
 
 const mapStateToProps = state => ({
-    points: state.board.points
+    points: state.board.points,
+    brushWidth: state.toolbar.brushWidth,
+    brushColor: state.toolbar.brushColor
 })
 
 const mapDispatchToProps = {

@@ -44,10 +44,53 @@
   background-color: #b8213a;
 }
 
-.toolbarImgButton {
-  padding: 3px;
+.colorCircle {
+  height: 35px;
+  width: 35px;
+  border-radius: 50%;
+  display: inline-block;
+  margin: 12px 5px;
 }
 
-.toolbarImgButton:hover {
+.widthLine {
+  height: 35px;
+  display: inline-block;
+  margin: 12px 10px;
+  background-color: #82817F;
+}
+
+.colorCircle:hover,
+.widthLine:hover {
   transform: scale(1.1);
+  cursor: pointer;
+}
+
+.activeElement {
+  border: 1.5px rgba(0, 0, 0, 0.6) solid;
+}
+
+.redCircle {
+  composes: colorCircle;
+  background-color: #C0392B;
+}
+.greenCircle {
+  composes: colorCircle;
+  background-color: #5BAC31;
+}
+.blueCircle {
+  composes: colorCircle;
+  background-color: #0056C5;
+}
+
+.lowWidth {
+  composes: widthLine;
+  width: 5px;
+}
+.mediumWidth {
+  composes: widthLine;
+  width: 10px;
+}
+.bigWidth {
+  composes: widthLine;
+  width: 15px;
 }
