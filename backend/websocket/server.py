@@ -97,6 +97,7 @@ class Server:
 
             try:
                 if self._validate_message(message):
+                    logging.info("validated!")
                     await self._send_to_clients(message, ws, room_id)
             except Exception as err:
                 logging.info(f"ERROR on distribute: {str(err)}")
@@ -123,13 +124,8 @@ class Server:
             return False
 
         if data["action"] == "saveLastPic":
-            # check data when action 'saveLastPic'
-            if (
-                "pic" in data
-                and "brush" in data
-                and "color" in data["brush"]
-                and "width" in data["brush"]
-            ):
+            # check structure when action 'saveLastPic'
+            if "pic" in data and "key" in data and "mode" in data:
                 return True
 
         elif data["action"] == "clearBoard":
@@ -169,7 +165,9 @@ class Server:
 def start():
     """Launch server."""
     server = Server()
-    start_server = websockets.serve(server.main_handler, "127.0.0.1", 8001)
+    start_server = websockets.serve(
+        server.main_handler, "0.0.0.0", 8001  # noqa
+    )
     loop = asyncio.get_event_loop()
     loop.run_until_complete(start_server)
     loop.run_forever()

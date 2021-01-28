@@ -22,9 +22,9 @@ services:
         build:
             context: ./frontend
             dockerfile: Dockerfile.development
-            args:
-                API_URL: ${API_URL-http://192.168.0.100:8000/api}
-                WS_URL: ${WS_URL-ws://192.168.0.100:8001}
-                FRONTEND_URL: ${FRONTEND_URL-http://192.168.0.100}
+        environment:
+            NEXT_PUBLIC_API_HOST: ${API_URL-http://192.168.0.100:8000/api}
+            NEXT_PUBLIC_WS_HOST: ${WS_URL-ws://192.168.0.100:8001}
+            NEXT_PUBLIC_FRONTEND_HOST: ${FRONTEND_URL-http://192.168.0.100}
         volumes:
             - ./frontend:/app

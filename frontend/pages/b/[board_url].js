@@ -22,6 +22,7 @@ export default function SyncBoard() {
             } else {
               console.log(response.error.message);
 
+              // redirect to home page if didn't find such board
               router.push(process.env.NEXT_PUBLIC_FRONTEND_HOST, undefined, {shallow:true})
 
               dispatch(changeMessage("Board didn't find"))
@@ -47,9 +48,9 @@ export default function SyncBoard() {
               return dispatch(clearBoard())
 
             case 'saveLastPic':
-              const {pic, brush} = JSON.parse(event.data);
+              const {pic, key, mode} = JSON.parse(event.data);
 
-              return dispatch(addPic(pic, brush))
+              return dispatch(addPic(pic, key, mode))
 
             default:
               return console.log('no one action is correct')

@@ -4,16 +4,19 @@ export const BOARD_CLEAR = "BOARD_CLEAR"
 export const BOARD_INIT_POINTS = "BOARD_INIT_POINTS"
 export const BOARD_ADD_PIC = "BOARD_ADD_PIC"
 
-export const createNewPic = (brush) => ({
+export const createNewPic = (key, mode) => ({
     type: BOARD_CREATE_NEW_PIC,
-    payload: __transformBrushToKey(brush)
+    payload: {
+        key, mode
+    }
 })
 
-export const addPointToLastPic = (point, brush) => ({
+export const addPointToLastPic = (point, key, mode) => ({
     type: BOARD_ADD_POINT_TO_LAST_PIC,
     payload: {
         point,
-        key: __transformBrushToKey(brush)
+        key,
+        mode
     }
 })
 
@@ -26,11 +29,12 @@ export const initPoints = (points) => ({
     payload: points
 })
 
-export const addPic = (pic, brush) => ({
+export const addPic = (pic, key, mode) => ({
     type: BOARD_ADD_PIC,
     payload: {
         pic,
-        key: __transformBrushToKey(brush)
+        key,
+        mode
     }
 })
 

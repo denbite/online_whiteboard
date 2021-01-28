@@ -71,7 +71,7 @@ def update_board(data):
 
     if action == "BOARD_ADD_PIC":
         # validate all required fields exists for this action
-        for required_field in ["board_url", "data_delta", "key"]:
+        for required_field in ["board_url", "data_delta", "key", "mode"]:
             if required_field not in data.keys():
                 err = f"No '{required_field}' specified"
                 return send_error_response(400, err)
@@ -80,12 +80,21 @@ def update_board(data):
             board_url = str(data["board_url"])
             data_delta = loads(data["data_delta"])
             key = str(data["key"])
+            mode = str(data["mode"])
         except Exception as err:
             return send_error_response(400, str(err))
 
-        # todo: could add regex for check key correct or no
-        if len(key) != 9:
-            err = "Invalid key given"
+        if mode == "TOOLBAR_MODE_DRAW":
+            # validate ket for draw
+            if key.count(".#") != 1:
+                err = "Invalid DRAW key given"
+                return send_error_response(400, err)
+        elif mode == "TOOLBAR_MODE_ERASE":
+            if len(key) != 2:
+                err = "Invalid ERASE key given"
+                return send_error_response(400, err)
+        else:
+            err = "Invalid mode given"
             return send_error_response(400, err)
 
         if not data_delta:
@@ -100,13 +109,17 @@ def update_board(data):
             err = f"Didn't find board with url '{board_url}'"
             return send_error_response(404, err)
 
-        new_data: dict = deepcopy(board_obj.data)
+        new_data: list = deepcopy(board_obj.data)
+
+        # create first pic if empty or if last pic mode isn't equal to given
+        if len(new_data) == 0 or new_data[-1]["mode"] != mode:
+            new_data.append({"mode": mode, "data": {}})
 
         # assume key is correct
-        if key not in new_data:
-            new_data[key] = []
+        if key not in new_data[-1]["data"]:
+            new_data[-1]["data"][key] = []
 
-        new_data[key].append(data_delta)
+        new_data[-1]["data"][key].append(data_delta)
 
         try:
             updated_obj = Board.update(
@@ -134,7 +147,7 @@ def update_board(data):
             return send_error_response(404, err)
 
         try:
-            updated_obj = Board.update({"url": board_url}, **{"data": {}})
+            updated_obj = Board.update({"url": board_url}, **{"data": []})
         except Exception as err:
             return send_error_response(400, str(err))
 

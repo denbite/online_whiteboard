@@ -2,22 +2,25 @@ import React, {useEffect, useRef} from 'react';
 import { connect } from 'react-redux';
 import styles from '../styles/Board.module.css';
 import {createNewPic, addPointToLastPic, __transformBrushToKey} from '../store/board/actions'
+import { TOOLBAR_MODE_ERASE, TOOLBAR_MODE_DRAW } from '../store/toolbar/constants'
 import { fetchApi } from '../helpers/api';
 
 export const Board = props => {
     const store_points = props.points;
     const currentBrushWidth = props.brushWidth;
     const currentBrushColor = props.brushColor;
+    const currentEraserWidth = props.eraserWidth;
+    const currentMode = props.mode;
 
     const canvas_ref = useRef(null);
 
     function createNewPicEvent(e) {
 
         // put to store empty array as "width.color": [..., []] for adding new points in future
-        props.createNewPic({
+        props.createNewPic( currentMode === TOOLBAR_MODE_DRAW ? __transformBrushToKey({
             width: currentBrushWidth,
-            color: currentBrushColor,
-        })
+            color: currentBrushColor
+        }) : currentEraserWidth , currentMode)
     }
 
     function addPointToLastPicEvent(e) {
@@ -27,41 +30,42 @@ export const Board = props => {
         props.addPointToLastPic({
             x: (e.type == 'mousemove') ? (e.clientX - e.target.offsetLeft) : (e.touches[0].clientX - e.target.offsetLeft),
             y: (e.type == 'mousemove') ? (e.clientY - e.target.offsetTop) : (e.touches[0].clientY - e.target.offsetTop),
-        }, {
+        }, currentMode === TOOLBAR_MODE_DRAW ? __transformBrushToKey({
             width: currentBrushWidth,
-            color: currentBrushColor,
-        });
+            color: currentBrushColor
+        }) : currentEraserWidth, currentMode);
     }
 
     function saveLastPic(e) {
         if (!props.websocket || !props.url) return;
 
-        let key = __transformBrushToKey({
+        let key = currentMode === TOOLBAR_MODE_DRAW ? __transformBrushToKey({
             width: currentBrushWidth,
             color: currentBrushColor
-        })
+        }) : currentEraserWidth
 
-        let lastPic = store_points[key][ store_points[key].length - 1 ]
+        let lastPic = store_points[ store_points.length - 1 ].data[key][ store_points[ store_points.length - 1 ].data[key].length - 1 ]
 
         fetchApi('/board', 'PUT', {
                         board_url: props.url,
                         data_delta: JSON.stringify(lastPic),
                         key: key,
-                        action: "BOARD_ADD_PIC"
+                        action: "BOARD_ADD_PIC",
+                        mode: currentMode
                     }, response => {
+
                         if (response.success){
                             props.websocket.send(JSON.stringify({
                                     action: 'saveLastPic',
-                                    brush: {
-                                        width: currentBrushWidth,
-                                        color: currentBrushColor,
-                                    },
-                                    pic: lastPic
+                                    pic: lastPic,
+                                    key: key,
+                                    mode: currentMode
                                 }));
                             } else {
-                                console.log('error on fetch PUT /board: ', response.error.message)
+                                console.log(' error on fetch PUT /board: ', response.error.message)
                             }
-                        })
+                        }
+                        )
 
     }
 
@@ -86,27 +90,39 @@ export const Board = props => {
         }
 
         // draw picture with points from store that saved as "width.color": [[{x, y}, {x, y}, ...], [{x, y}, {x, y}, ...], ...]
-        for (const [key, points] of Object.entries(store_points)) {
-            if (points.length === 0) continue;
 
-            let brushWidth = key.split('.')[0];
-            let brushColor = key.split('.')[1];
+        store_points.forEach(element => {
 
-            points.map( one_picture => {
-                for (let i=0; i < one_picture.length - 1; i++){
-                    ctx.beginPath(); // begin
+            if (element.mode === TOOLBAR_MODE_DRAW){
+                ctx.globalCompositeOperation = 'source-over'
+            } else if (element.mode === TOOLBAR_MODE_ERASE){
+                ctx.globalCompositeOperation = 'destination-out'
+            } else return;
 
-                    ctx.lineWidth = brushWidth;
-                    ctx.strokeStyle = brushColor;
+            for (const [key, points] of Object.entries(element.data)) {
+                if (points.length === 0) continue;
 
-                    ctx.moveTo(one_picture[i].x, one_picture[i].y); // from
+                if (element.mode === TOOLBAR_MODE_DRAW){
+                    ctx.lineWidth = key.split('.')[0];
+                    ctx.strokeStyle = key.split('.')[1];
+                } else if (element.mode === TOOLBAR_MODE_ERASE){
+                    ctx.lineWidth = key;
+                } else return;
 
-                    ctx.lineTo(one_picture[i + 1].x, one_picture[i + 1].y); // to
+                points.map( one_picture => {
+                    for (let i=0; i < one_picture.length - 1; i++){
+                        ctx.beginPath(); // begin
 
-                    ctx.stroke(); // draw it!
-                }
-            } )
-        }
+                        ctx.moveTo(one_picture[i].x, one_picture[i].y); // from
+
+                        ctx.lineTo(one_picture[i + 1].x, one_picture[i + 1].y); // to
+
+                        ctx.stroke(); // draw it!
+                    }
+                } )
+            }
+        });
+
 
     }, [store_points]);
 
@@ -121,7 +137,9 @@ export const Board = props => {
 const mapStateToProps = (state) => ({
     points: state.board.points,
     brushWidth: state.toolbar.brushWidth,
-    brushColor: state.toolbar.brushColor
+    brushColor: state.toolbar.brushColor,
+    eraserWidth: state.toolbar.eraserWidth,
+    mode: state.toolbar.mode
 })
 
 const mapDispatchToProps = {
